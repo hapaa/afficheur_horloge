@@ -33,10 +33,11 @@ return UDR;
 
 int main(){
 
+
     USART_Init(MYUBRR);
 
     while(1)
     {
-      USART_Transmit(USART_Receive()+1);
+      sprintf(USART_Transmit(USART_Receive()+1));
     }
 }
