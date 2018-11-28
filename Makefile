@@ -1,16 +1,15 @@
 
+.PHONY: all install
+all: install
 
-.PHONY: all
-all: prog
 
-prog:
-	avr-gcc -mmcu=atmega128  SPI_example.c -o prog.elf
+install: prog.hex
+	avrdude -v -p atmega128 -c jtagmkI -P /dev/ttyUSB0 -D -U "flash:w:prog.hex:i"
+
+prog.hex: main.c
+	avr-gcc -mmcu=atmega128  main.c -o prog.elf
 	avr-objcopy -j .text -O ihex prog.elf prog.hex
 
 
-install: prog
-	avrdude -v -p atmega128 -c jtagmkI -P /dev/ttyACM0 -D -U "flash:w:prog.hex:i"
-
-
 clean:
-	rm *.elf
+	rm *.elf *.hex
