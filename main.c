@@ -1,21 +1,45 @@
+#include <stdio.h>
 #include <avr/io.h>
+#include <util/delay.h>
 
 
-int main() {
-  // Write value to Pin A
-  DDRA = OxFF; // turn on output
-  PORTA = 0x00;
-  PINA = 0x02;
-  
-  
-  // Read value from Pin A
-  DDRA = 0x00; // turn on input
-  PORTA = 0xFF; // enable pull-ups
-  unsigned char ret = PINA;
+#define F_CPU 13000000
+#define BAUD 9600
+#define MYUBRR F_CPU/8/BAUD-1
 
-  // Print received value through JTAG
-  
-  
-  // USe UART for print
-  return 0;
+
+void USART_Init (unsigned int ubrr)
+{
+  /* Set baud rate */
+  UBRR0H = (unsigned char)(ubrr>>8);
+  UBRR0L = (unsigned char)ubrr;
+  /* Enable receiver and transmitter */
+  UCSR0B = (1<<RXEN)|(1<<TXEN);
+  /* Set frame format: 8data, 2stop bit */
+  UCSR0C = (1<<USBS)|(3<<UCSZ0);
+}
+
+
+void USART_Transmit( unsigned char data ) {
+  /* Wait for empty transmit buffer */
+  while ( !( UCSR0A & (1<<UDRE0)) );
+  /* Put data into buffer, sends the data */
+  UDR0 = data;
+}
+
+
+unsigned char USART_Receive( void ) {
+  /* Wait for data to be received */
+  while ( !(UCSR0A & (1<<RXC0)) );
+  /* Get and return received data from buffer */
+  return UDR0;
+}
+
+
+int main(){
+    
+  USART_Init(MYUBRR);
+  while (1){
+      USART_Transmit(USART_Receive()+1);
+  }
 }
