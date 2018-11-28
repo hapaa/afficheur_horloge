@@ -1,12 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-//Master : on envoie des données
-//Slave : on va t'interroger sur tes données
-
-//On est maitre (processeur), notre puce est esclave
-//Mais il arrive que le processeur soit esclave
-
 void SPI_MasterInit(void)
 {
 /* Set MOSI and SCK output, all others input */
