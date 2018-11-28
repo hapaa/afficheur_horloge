@@ -9,7 +9,10 @@ ISR(INT0_vect){
 int set_interrupt(){
 
     //etre sûr que TWEN de TWCR est à 0
-    DDRD &= ~(1<<DDD0); //Active interrupt 0 du PORTD
+
+    DDRD &= ~(1<<DDD0); //Met PORTD0 en Input
+
+    PORTD |= (1<<PORTD0); //Mettre le pull-up resistor
     
     EICRA |= (1<<ISCO1)|(1<<ISCO0); //Active le mode détection de fronts montants du INT0
 
