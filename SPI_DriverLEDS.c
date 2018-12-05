@@ -16,3 +16,12 @@ SPDR = cData;
 /* Wait for transmission complete */
 while(!(SPSR & (1<<SPIF)));
 }
+
+void Test_LED(void)
+{
+    uint8_t value = 0;
+    SPI_MasterTransmit(value);
+    value |= (1<<5)|(1<<6);
+    SPI_MasterTransmit(value);
+
+}
