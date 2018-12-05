@@ -39,7 +39,6 @@ return UDR0;
 
 int main()
 {
-
 USART_Init(MYUBRR);
 while (1){
 USART_Transmit(USART_Receive()+1);

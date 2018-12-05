@@ -7,15 +7,28 @@
 #define MYUBRR F_CPU/16/BAUD-1
 
 
-void USART_Init (unsigned int ubrr)
+void USART_Init ()
 {
+//    DDRE |= (1<<DDE2); // METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
+//    PORTE &= ~(1<<PORTE2); // FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
+    UCSR0A = 0;
+    UCSR0B = 0;
+    UCSR0C = 0;
+
+    unsigned int ubrr = F_CPU/16/BAUD-1;
+
     /* Set baud rate */
-    UBRR0H = (unsigned char)(ubrr>>8);
-    UBRR0L = (unsigned char)ubrr;
+    UBRR0H = (unsigned char) (ubrr>>8);
+    UBRR0L = (unsigned char) ubrr;
+
+    /* Clear the TXC flag*/
+    //UCSR0A |= !(1<<TXC0);
+
     /* Enable receiver and transmitter */
     UCSR0B = (1<<RXEN0)|(1<<TXEN0);
     /* Set frame format: 8data, 2stop bit */
-    UCSR0C = (1<<USBS0)|(3<<UCSZ0);
+    //UCSR0C = (1<<USBS0)|(1<<UCSZ00)|(1<<UCSZ01);
+    UCSR0C =  (1<<UCSZ00)|(1<<UCSZ01);
 }
 
 
@@ -39,10 +52,11 @@ unsigned char USART_Receive( void )
 
 int main()
 {
-
-    USART_Init(MYUBRR);
+    USART_Init();
     while (1)
     {
-        USART_Transmit(USART_Receive()+1);
+        USART_Transmit(USART_Receive());
     }
+
+    return 0;
 }

@@ -1,8 +1,8 @@
 file?=main.c
 
 
-all: prog.hex
-	avrdude -V -F -p atmega128 -c jtagmkI -P /dev/ttyUSB0 -D -U "flash:w:prog.hex:i"
+all: prog.hex	
+	avrdude -V -B 9600 -p atmega128 -c jtagmkI -P /dev/ttyUSB0 -U "flash:w:prog.hex:i"
 
 
 prog.hex: ${file}
