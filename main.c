@@ -8,6 +8,7 @@
 #define MYUBRR F_CPU/16/BAUD-1
 int compteur;
 int compteur_usart;
+int compteur_timer;
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
@@ -95,7 +96,12 @@ ISR(USART0_RX_vect){
     compteur_usart++;
 }
 
-void set_interrupt(){
+ISR(TIMER1_COMPA_vect){
+    //Faire le bidule
+    compteur_timer++;
+}
+
+void set_interrupt(void){
 
     //etre sûr que TWEN de TWCR est à 0
 
@@ -112,6 +118,24 @@ void set_interrupt(){
 
 }
 
+void init_horloge(void){
+  TIMSK |=(1<<OCIE1A);
+
+  //Configurer
+  TCCR1A |= (1<<WGM11)|(1<<WGM10);
+  TCCR1B |= (1<<CS11)|(1<<CS10)|(1<<WGM12)|(1<<WGM13);
+
+  //Valeur
+  uint16_t  valeur = 40625;
+
+  uint8_t valeur_low = valeur;
+  uint8_t valeur_high = valeur>>8;
+
+  OCR1AH=valeur_high;
+  OCR1AL=valeur_low;
+
+}
+
 int main(void)
 {
 /*USART_Init(MYUBRR);
@@ -124,8 +148,9 @@ int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
 int compteur_precedent=0;
+int compteur_timer_precedent=0;
 set_interrupt();
-
+init_horloge();
 USART_Init(MYUBRR);
 
 
@@ -152,9 +177,29 @@ while(1){
 
     if(compteur_usart_precedent!=compteur_usart)
     {
-      USART_Transmit(USART_Receive() + 1);
+      unsigned char test='o';
+      USART_Receive();
+
+
+      USART_Transmit(test);
       compteur_usart_precedent=compteur_usart;
 
+    }
+
+    if(compteur_timer_precedent*5==compteur_timer)
+    {
+      if(value1==255)
+      {
+        value1=0;
+        value2=0;
+      }
+      else
+      {
+        value1=255;
+        value2=255;
+      }
+
+      compteur_timer_precedent++;
     }
 }
 
