@@ -7,6 +7,7 @@
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
 int compteur;
+int compteur_usart;
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
@@ -17,7 +18,7 @@ void USART_Init (unsigned int ubrr)
 UBRR0H = (unsigned char)(ubrr>>8);
 UBRR0L = (unsigned char)ubrr;
 /* Enable receiver and transmitter */
-UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);
 /* Set frame format: 8data, 2stop bit */
 UCSR0C = (1<<USBS0)|(1<<UCSZ00)|(1<<UCSZ01);
 }
@@ -25,7 +26,7 @@ UCSR0C = (1<<USBS0)|(1<<UCSZ00)|(1<<UCSZ01);
 
 void USART_Transmit( unsigned char data ) {
 /* Wait for empty transmit buffer */
-while ( !( UCSR0A & (1<<UDRE0)) );
+//while ( !( UCSR0A & (1<<UDRE0)) );
 /* Put data into buffer, sends the data */
 UDR0 = data;
 }
@@ -33,7 +34,7 @@ UDR0 = data;
 
 unsigned char USART_Receive( void ) {
 /* Wait for data to be received */
-while ( !(UCSR0A & (1<<RXC0)) );
+//while ( !(UCSR0A & (1<<RXC0)) );
 /* Get and return received data from buffer */
 return UDR0;
 }
@@ -89,6 +90,11 @@ ISR(INT0_vect){
     compteur++;
 }
 
+ISR(USART0_RX_vect){
+    //Faire le bidule
+    compteur_usart++;
+}
+
 void set_interrupt(){
 
     //etre sûr que TWEN de TWCR est à 0
@@ -113,10 +119,14 @@ while (1){
 USART_Transmit(USART_Receive()+1);
 }*/
 compteur = 0;
+compteur_usart = 0;
+int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
 int compteur_precedent=0;
 set_interrupt();
+
+USART_Init(MYUBRR);
 
 
 
@@ -139,6 +149,13 @@ while(1){
         compteur_precedent=compteur;
     }
     Control_LEDS(value1,value2);
+
+    if(compteur_usart_precedent!=compteur_usart)
+    {
+      USART_Transmit(USART_Receive() + 1);
+      compteur_usart_precedent=compteur_usart;
+
+    }
 }
 
 }
