@@ -8,7 +8,9 @@
 #define MYUBRR F_CPU/16/BAUD-1
 int compteur;
 int compteur_usart;
-int compteur_timer;
+int compteur_secondes;
+int compteur_temps;
+int compteur_debug;
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
@@ -96,9 +98,19 @@ ISR(USART0_RX_vect){
     compteur_usart++;
 }
 
+ISR(TIMER0_COMP_vect){
+    //Faire le bidule
+    compteur_secondes++;
+}
+
 ISR(TIMER1_COMPA_vect){
     //Faire le bidule
-    compteur_timer++;
+    compteur_temps++;
+}
+
+ISR(TIMER3_COMPA_vect){
+    //Faire le bidule
+    compteur_debug++;
 }
 
 void set_interrupt(void){
@@ -118,21 +130,50 @@ void set_interrupt(void){
 
 }
 
-void init_horloge(void){
+void init_secondes(void){
+  TIMSK |=(1<<OCIE0);
+
+  //Configurer
+  TCCR0 |= (1<<CS01)|(1<<CS00);
+
+  uint8_t valeur = 250;
+  OCR0 = valeur;
+
+}
+
+void init_temps(void){
   TIMSK |=(1<<OCIE1A);
 
   //Configurer
   TCCR1A |= (1<<WGM11)|(1<<WGM10);
-  TCCR1B |= (1<<CS11)|(1<<CS10)|(1<<WGM12)|(1<<WGM13);
+  TCCR1B |= (1<<CS10)|(1<<WGM12)|(1<<WGM13);
 
   //Valeur
-  uint16_t  valeur = 40625;
+  uint16_t  valeur = 5416;
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
 
   OCR1AH=valeur_high;
   OCR1AL=valeur_low;
+
+}
+
+void init_debug(void){
+  ETIMSK |=(1<<OCIE3A);
+
+  //Configurer
+  TCCR3A |= (1<<WGM31)|(1<<WGM30);
+  TCCR3B |= (1<<CS30)|(1<<WGM32)|(1<<WGM33);
+
+  //Valeur
+  uint16_t  valeur = 60000;
+
+  uint8_t valeur_low = valeur;
+  uint8_t valeur_high = valeur>>8;
+
+  OCR3AH=valeur_high;
+  OCR3AL=valeur_low;
 
 }
 
@@ -148,9 +189,15 @@ int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
 int compteur_precedent=0;
-int compteur_timer_precedent=0;
+
+int compteur_secondes_precedent=0;
+
+int compteur_temps_precedent=0;
+int compteur_pas;
+
+//int compteur_debug_precedent=0;
 set_interrupt();
-init_horloge();
+init_secondes();
 USART_Init(MYUBRR);
 
 
@@ -186,7 +233,7 @@ while(1){
 
     }
 
-    if(compteur_timer_precedent*5==compteur_timer)
+    if(compteur_secondes_precedent*1625==compteur_secondes)
     {
       if(value1==255)
       {
@@ -199,8 +246,31 @@ while(1){
         value2=255;
       }
 
-      compteur_timer_precedent++;
+      compteur_secondes_precedent++;
+      if (compteur_secondes_precedent==60)
+      {
+        compteur_secondes=0;
+        compteur_secondes_precedent=0;
+      }
     }
+
+    if(compteur_temps_precedent*compteur_pas==compteur_temps)
+    {
+      if(value1==255)
+      {
+        value1=0;
+        value2=0;
+      }
+      else
+      {
+        value1=255;
+        value2=255;
+      }
+
+      compteur_temps_precedent++;
+    }
+
+
 }
 
 }
