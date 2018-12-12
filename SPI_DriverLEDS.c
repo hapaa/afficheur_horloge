@@ -28,13 +28,21 @@ void SPI_MasterTransmit(char cData)
 
 void Test_LED(void)
 {
+    PORTE |= (1<<PORTE5);
+
+    PORTE &= ~(1<<PORTE5);
+
     uint8_t value = 0;
-    SPI_MasterTransmit(value);
     value |= (1<<5)|(1<<6);
     SPI_MasterTransmit(value);
 
     PORTE |= (1<<PORTE5);
+    PORTE &= ~(1<<PORTE5);
 
+    value |= (1<<5)|(1<<6);
+    SPI_MasterTransmit(value);
+
+    PORTE |= (1<<PORTE5);
     PORTE &= ~(1<<PORTE5);
 
     PORTE &= ~(1<<PORTE4);
@@ -43,7 +51,7 @@ void Test_LED(void)
 }
 
 
-int main()
+/*int main()
 {
     SPI_MasterInit();
 //    while (1)
@@ -53,4 +61,4 @@ int main()
     Test_LED();
 
     return 0;
-}
+}*/
