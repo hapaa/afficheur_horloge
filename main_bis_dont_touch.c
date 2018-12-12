@@ -2,18 +2,42 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <stdlib.h>
+#include <stdbool.h>
+
 
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
-int compteur;
-int compteur_usart ;
+bool detection_hall;
+int compteur_usart;
 int compteur_secondes;
 int compteur_temps;
 int compteur_debug;
 
+
+
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
+unsigned char USART_Receive( void ) {
+return UDR0;
+}
+
+/*void uart_send(char *str) {
+  if(value1==255)
+  {
+    value1=0;
+    value2=0;
+  }
+  else
+  {
+    value1=255;
+    value2=255;
+  }
+    while (*str != '\0') {
+        while (UCSR0A & _BV(UDRE0));
+        UDR0 = *(str++);
+        USART_Receive();
+    }
+}*/
 
 void USART_Init (unsigned int ubrr)
 {
@@ -21,35 +45,16 @@ void USART_Init (unsigned int ubrr)
 UBRR0H = (unsigned char)(ubrr>>8);
 UBRR0L = (unsigned char)ubrr;
 /* Enable receiver and transmitter */
-UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);
+UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0)|(1<<UDRIE0);
 /* Set frame format: 8data, 2stop bit */
 UCSR0C = (1<<USBS0)|(1<<UCSZ00)|(1<<UCSZ01);
 }
-
 
 void USART_Transmit( unsigned char data ) {
 /* Wait for empty transmit buffer */
 while ( !( UCSR0A & (1<<UDRE0)) );
 /* Put data into buffer, sends the data */
 UDR0 = data;
-}
-
-
-unsigned char USART_Receive( void ) {
-/* Wait for data to be received */
-//while ( !(UCSR0A & (1<<RXC0)) );
-/* Get and return received data from buffer */
-return UDR0;
-}
-
-void uart_send(char *str) {
-
-    while (*str != '\0') {
-      if (UCSR0A & _BV(UDRE0)){
-        UDR0 = *(str++);
-      }
-
-    }
 }
 
 void SPI_MasterInit(void)
@@ -84,8 +89,6 @@ void SPI_MasterTransmit(char cData)
 
 void Control_LEDS(uint8_t value1, uint8_t value2)
 {
-
-
     PORTE |= (1<<PORTE4);
 
     SPI_MasterTransmit(value1);
@@ -100,7 +103,7 @@ void Control_LEDS(uint8_t value1, uint8_t value2)
 
 ISR(INT0_vect){
     //Faire le bidule
-    compteur++;
+    detection_hall=1;
 }
 
 ISR(USART0_RX_vect){
@@ -190,60 +193,59 @@ void init_debug(void){
 
 int main(void)
 {
+  uint8_t value1 = 0;
+  uint8_t value2 = 0;
 /*USART_Init(MYUBRR);
 while (1){
 USART_Transmit(USART_Receive()+1);
 }*/
-compteur = 0;
+//int con= 6;
+detection_hall = 0;
 compteur_usart = 0;
-int compteur_usart_precedent = 0;
+//int compteur_usart_precedent = 0;
+/*int compteur_secondes_precedent=0;
+int compteur_temps_precedent=0;
+int compteur_pas=4;*/
+//int compteur_debug_precedent=0;
+
 SPI_MasterInit();
 
-int compteur_precedent=0;
-
-//int compteur_secondes_precedent=0;
-
-//int compteur_temps_precedent=0;
-//int compteur_pas=4;
-
-//int compteur_debug_precedent=0;
 set_interrupt();
-init_secondes();
 USART_Init(MYUBRR);
-
-
-
- uint8_t value1 = 0;
- uint8_t value2 = 0;
+init_secondes();
 
 while(1){
-    if(compteur_precedent!=compteur)
+    //USART_Receive();
+    /*if(detection_hall==1)
     {
-      if(value1==255)
-      {
-        value1=0;
-        value2=0;
-      }
-      else
-      {
-        value1=255;
-        value2=255;
-      }
-      char string[64];
+        char buffer[64];
+        sprintf(buffer, "%d",compteur_temps);
+        char* pointeur_buffer = buffer;
 
-      itoa(compteur, string, 10);  //convert integer to string, radix=10
-
-    //  char test[] = printf("te", template);
-
-      //USART_Receive();
-
-
-      uart_send(string);
-        compteur_precedent=compteur;
+        USART_Transmit(pointeur_buffer);
+        compteur_temps=0;
+        compteur_temps_precedent = 1;
+        detection_hall=0;
+        char tes[4] = "bonj";
+        //USART_Receive();
+      //  USART_Transmit('a');
+        USART_Receive();
+        USART_Transmit('a');
+        uart_send(tes);
+    }*/
+    if(value1==255)
+    {
+      value1=0;
+      value2=0;
+    }
+    else
+    {
+      value1=255;
+      value2=255;
     }
     Control_LEDS(value1,value2);
 
-    if(compteur_usart_precedent!=compteur_usart)
+    /*if(compteur_usart_precedent!=compteur_usart)
     {
       if(value1==255)
       {
@@ -256,21 +258,22 @@ while(1){
         value2=255;
       }
 
-      //int num = 1234;
-      char string[64];
-
-      itoa(compteur_usart, string, 10);  //convert integer to string, radix=10
-
-    //  char test[] = printf("te", template);
-
-      //USART_Receive();
+      USART_Transmit('v');
+      char buffer[64];
+      sprintf(buffer,"salut");
 
 
-      uart_send(string);
+      //USART_puts(buffer);
 
+      unsigned char test='o';
+      USART_Receive();
+      unsigned char* testeur = &test;
+
+      USART_Transmit(testeur);
       compteur_usart_precedent=compteur_usart;
 
-    }
+    }*/
+
 
     /*if(compteur_secondes_precedent*1625==compteur_secondes)
     {
