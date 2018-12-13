@@ -255,6 +255,8 @@ while(1){
 
         //USART_Receive();
         detection_hall=0;
+        compteur_temps_precedent=0;
+        compteur_temps=0;
 
     }
 
