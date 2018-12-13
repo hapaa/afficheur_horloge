@@ -3,11 +3,12 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
-int compteur;
-int compteur_usart ;
+int detection_hall;
+int compteur_usart;
 int compteur_secondes;
 int compteur_temps;
 int compteur_debug;
@@ -98,9 +99,22 @@ void Control_LEDS(uint8_t value1, uint8_t value2)
     PORTE &= ~(1<<PORTE4);
 }
 
+void Changement_LEDS(uint8_t* value1, uint8_t* value2){
+  if(*value1==255)
+  {
+    *value1=0;
+    *value2=0;
+  }
+  else
+  {
+    *value1=255;
+    *value2=255;
+  }
+}
+
 ISR(INT0_vect){
     //Faire le bidule
-    compteur++;
+    detection_hall++;
 }
 
 ISR(USART0_RX_vect){
@@ -194,120 +208,98 @@ int main(void)
 while (1){
 USART_Transmit(USART_Receive()+1);
 }*/
-compteur = 0;
 compteur_usart = 0;
+compteur_secondes = 0;
+compteur_temps=0;
 int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
-int compteur_precedent=0;
+detection_hall=0;
 
-//int compteur_secondes_precedent=0;
+int compteur_secondes_precedent=0;
 
-//int compteur_temps_precedent=0;
+int compteur_temps_precedent=0;
 //int compteur_pas=4;
 
 //int compteur_debug_precedent=0;
 set_interrupt();
 init_secondes();
+init_temps();
 USART_Init(MYUBRR);
 
 
+uint8_t value1 = 0;
+uint8_t value2 = 0;
 
- uint8_t value1 = 0;
- uint8_t value2 = 0;
+uint8_t* pt_value1 = &value1;
+uint8_t* pt_value2 = &value2;
 
 while(1){
-    if(compteur_precedent!=compteur)
+    if(detection_hall==2)
     {
-      if(value1==255)
-      {
-        value1=0;
-        value2=0;
-      }
-      else
-      {
-        value1=255;
-        value2=255;
-      }
+
+      Changement_LEDS(pt_value1,pt_value2);
+
       char string[64];
 
-      itoa(compteur, string, 10);  //convert integer to string, radix=10
+      itoa(compteur_temps, string, 10);  //convert integer to string, radix=1
+      sprintf(string+strlen(string),"\n");
 
-    //  char test[] = printf("te", template);
 
-      //USART_Receive();
+
 
 
       uart_send(string);
-        compteur_precedent=compteur;
+
+      //  char test[] = printf("te", template);
+
+        //USART_Receive();
+        detection_hall=0;
+
     }
-    Control_LEDS(value1,value2);
+
 
     if(compteur_usart_precedent!=compteur_usart)
     {
-      if(value1==255)
-      {
-        value1=0;
-        value2=0;
-      }
-      else
-      {
-        value1=255;
-        value2=255;
-      }
+      //Changement_LEDS(pt_value1,pt_value2);
 
       //int num = 1234;
-      char string[64];
+      char str_usart[64];
 
-      itoa(compteur_usart, string, 10);  //convert integer to string, radix=10
+      itoa(20000, str_usart, 10);  //convert integer to string, radix=10
 
     //  char test[] = printf("te", template);
 
       //USART_Receive();
 
 
-      uart_send(string);
+      uart_send(str_usart);
 
       compteur_usart_precedent=compteur_usart;
+      compteur_temps=0;
+      compteur_temps_precedent=0;
 
     }
 
-    /*if(compteur_secondes_precedent*1625==compteur_secondes)
+    if(compteur_secondes_precedent*1625==compteur_secondes)
     {
-      if(value1==255)
-      {
-        value1=0;
-        value2=0;
-      }
-      else
-      {
-        value1=255;
-        value2=255;
-      }
+      //Changement_LEDS(pt_value1,pt_value2);
 
       compteur_secondes_precedent++;
-      if (compteur_secondes_precedent==60)
+      if (compteur_secondes_precedent==61)
       {
         compteur_secondes=0;
         compteur_secondes_precedent=0;
       }
     }
 
-    if(compteur_temps_precedent*compteur_pas==compteur_temps)
+    if(compteur_temps_precedent!=compteur_temps)
     {
-      if(value1==255)
-      {
-        value1=0;
-        value2=0;
-      }
-      else
-      {
-        value1=255;
-        value2=255;
-      }
+      //Changement_LEDS(pt_value1,pt_value2);
 
       compteur_temps_precedent++;
-    }*/
+    }
+    Control_LEDS(value1,value2);
 
 
 }
