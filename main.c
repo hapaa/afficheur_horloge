@@ -100,14 +100,14 @@ void Control_LEDS(uint8_t value1, uint8_t value2)
 }
 
 void Changement_LEDS(uint8_t* value1, uint8_t* value2){
-  if(*value1==255)
+  if(*value2==255)
   {
     *value1=0;
     *value2=0;
   }
   else
   {
-    *value1=255;
+    *value1=0;
     *value2=255;
   }
 }
@@ -115,6 +115,14 @@ void Changement_LEDS(uint8_t* value1, uint8_t* value2){
 ISR(INT0_vect){
     //Faire le bidule
     detection_hall++;
+    /*if(detection_hall==0)
+    {
+      detection_hall=1;
+    }
+    else
+    {
+      detection_hall=0;
+    }*/
 }
 
 ISR(USART0_RX_vect){
@@ -146,7 +154,7 @@ void set_interrupt(void){
 
     PORTD |= (1<<PORTD0); //Mettre le pull-up resistor
 
-    EICRA |= (1<<ISC01)|(1<<ISC00); //Active le mode détection de fronts montants du INT0
+    EICRA |= (1<<ISC01); //Active le mode détection de fronts montants du INT0
 
     EIMSK |= (1<<INT0); //Met le bit correspondant à l'interruption 0 sur 1 dans le EIMSK
 
@@ -214,7 +222,7 @@ compteur_temps=0;
 int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
-detection_hall=0;
+//detection_hall=0;
 
 int compteur_secondes_precedent=0;
 
@@ -228,17 +236,20 @@ init_temps();
 USART_Init(MYUBRR);
 
 
-uint8_t value1 = 0;
+/*uint8_t value1 = 0;
 uint8_t value2 = 0;
 
 uint8_t* pt_value1 = &value1;
 uint8_t* pt_value2 = &value2;
+Changement_LEDS(pt_value1,pt_value2);*/
+
 
 while(1){
-    if(detection_hall==2)
+
+    if( detection_hall>=1)
     {
 
-      Changement_LEDS(pt_value1,pt_value2);
+      //Changement_LEDS(pt_value1,pt_value2);
 
       char string[64];
 
@@ -254,11 +265,26 @@ while(1){
       //  char test[] = printf("te", template);
 
         //USART_Receive();
+
+
         detection_hall=0;
         compteur_temps_precedent=0;
         compteur_temps=0;
 
     }
+
+
+
+    /*uint8_t testeur = PIND & (1<<PORTD0);
+    if(testeur){
+
+      Control_LEDS(255,0);
+
+    }
+    else
+    {
+      Control_LEDS(0,255);
+    }*/
 
 
     if(compteur_usart_precedent!=compteur_usart)
@@ -295,13 +321,17 @@ while(1){
       }
     }
 
-    if(compteur_temps_precedent!=compteur_temps)
+    if(89<=compteur_temps && 93>=compteur_temps)
     {
-      //Changement_LEDS(pt_value1,pt_value2);
-
+      Control_LEDS(255,0);
       compteur_temps_precedent++;
     }
-    Control_LEDS(value1,value2);
+    else
+    {
+      Control_LEDS(0,0);
+    }
+
+
 
 
 }
