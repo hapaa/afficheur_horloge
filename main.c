@@ -10,7 +10,7 @@
 int detection_hall;
 int compteur_usart;
 int compteur_secondes;
-int compteur_temps;
+int temps;
 int compteur_debug;
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
@@ -138,7 +138,7 @@ ISR(TIMER0_COMP_vect){
 
 ISR(TIMER1_COMPA_vect){
     //Faire le bidule
-    compteur_temps++;
+    temps++;
 }
 
 ISR(TIMER3_COMPA_vect){
@@ -182,7 +182,7 @@ void init_temps(void){
   TCCR1B |= (1<<CS10)|(1<<WGM12)|(1<<WGM13);
 
   //Valeur
-  uint16_t  valeur = 5416;
+  uint16_t  valeur = 200;
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
@@ -217,17 +217,49 @@ while (1){
 USART_Transmit(USART_Receive()+1);
 }*/
 compteur_usart = 0;
+
 compteur_secondes = 0;
-compteur_temps=0;
+int secondes =0;
+int minutes = 50;
+int heures = 15;
+int heures_aiguille=0;
+
+secondes+=30;
+minutes+=30;
+heures+=6;
+
+if(secondes>=60){
+  secondes-=60;
+}
+
+if(minutes>=60)
+{
+  minutes-=60;
+}
+
+if (heures>=24)
+{
+  heures-=24;
+}
+
+if(heures>=12)
+{
+  heures_aiguille=heures-12;
+}
+else
+{
+  heures_aiguille=heures;
+}
+
+
+temps=0;
 int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
 //detection_hall=0;
 
-int compteur_secondes_precedent=0;
-
-int compteur_temps_precedent=0;
-//int compteur_pas=4;
+//int temps_precedent=0;
+int pas=3;
 
 //int compteur_debug_precedent=0;
 set_interrupt();
@@ -246,34 +278,33 @@ Changement_LEDS(pt_value1,pt_value2);*/
 
 while(1){
 
-    if( detection_hall>=1)
-    {
+  if( detection_hall>=1)
+  {
 
-      //Changement_LEDS(pt_value1,pt_value2);
+    //Changement_LEDS(pt_value1,pt_value2);
 
-      char string[64];
+    char string[64];
 
-      itoa(compteur_temps, string, 10);  //convert integer to string, radix=1
-      sprintf(string+strlen(string),"\n");
-
-
+    itoa(temps, string, 10);  //convert integer to string, radix=1
+    sprintf(string+strlen(string),"\n");
 
 
 
-      uart_send(string);
-
-      //  char test[] = printf("te", template);
-
-        //USART_Receive();
 
 
-        detection_hall=0;
-        compteur_temps_precedent=0;
-        compteur_temps=0;
+    uart_send(string);
 
-    }
+    //  char test[] = printf("te", template);
+
+      //USART_Receive();
 
 
+      detection_hall=0;
+      pas=temps/60;
+
+      temps=0;
+
+  }
 
     /*uint8_t testeur = PIND & (1<<PORTD0);
     if(testeur){
@@ -304,32 +335,61 @@ while(1){
       uart_send(str_usart);
 
       compteur_usart_precedent=compteur_usart;
-      compteur_temps=0;
-      compteur_temps_precedent=0;
+      temps=0;
+      //temps_precedent=0;
 
     }
 
-    if(compteur_secondes_precedent*1625==compteur_secondes)
+    if(secondes*1625==compteur_secondes)
     {
       //Changement_LEDS(pt_value1,pt_value2);
 
-      compteur_secondes_precedent++;
-      if (compteur_secondes_precedent==61)
+      secondes++;
+      if (secondes==60)
       {
         compteur_secondes=0;
-        compteur_secondes_precedent=0;
+        secondes=0;
+        minutes++;
+        if(minutes==60)
+        {
+          minutes=0;
+          heures++;
+
+          if(heures==24)
+          {
+            heures=0;
+          }
+          if(heures>=12)
+          {
+            heures_aiguille=heures-12;
+          }
+          else
+          {
+            heures_aiguille=heures;
+          }
+        }
       }
     }
 
-    if(89<=compteur_temps && 93>=compteur_temps)
+    if(pas*secondes<=temps && pas*secondes+6>=temps)
     {
       Control_LEDS(255,0);
-      compteur_temps_precedent++;
     }
     else
     {
-      Control_LEDS(0,0);
+      if(pas*minutes<=temps && pas*minutes+6>=temps){
+          Control_LEDS(255,0);
+        }
+          else{
+            if(pas*5*heures_aiguille<=temps && pas*5*heures_aiguille+6>=temps){
+              Control_LEDS(0,7);
+              }
+            else{
+              Control_LEDS(0,0);
+                }
+              }
     }
+
 
 
 
