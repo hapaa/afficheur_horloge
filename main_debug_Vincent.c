@@ -7,17 +7,17 @@
 
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
-
-uint16_t detection_hall;
-uint16_t compteur_usart;
-uint16_t compteur_secondes;
-uint16_t temps;
-uint16_t compteur_debug;
+int detection_hall;
+int compteur_usart;
+int compteur_secondes;
+int temps;
+int compteur_debug;
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
 
-void USART_Init (unsigned int ubrr) {
+void USART_Init (unsigned int ubrr)
+{
 /* Set baud rate */
 UBRR0H = (unsigned char)(ubrr>>8);
 UBRR0L = (unsigned char)ubrr;
@@ -53,7 +53,8 @@ void uart_send(char *str) {
     }
 }
 
-void SPI_MasterInit(void) {
+void SPI_MasterInit(void)
+{
     PORTB|=(1<<DDB0);
 
     DDRE |= (1<<DDE4);
@@ -62,14 +63,19 @@ void SPI_MasterInit(void) {
     DDRE |= (1<<DDE5);
     PORTE &= ~(1<<PORTE5);
 
+
+
     /* Set MOSI and SCK output, all others input */
     DDRB = (1<<DDB2)|(1<<DDB1);
     /* Enable SPI, Master, set clock rate fck/16 */
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+
+
 }
 
 
-void SPI_MasterTransmit(char cData) {
+void SPI_MasterTransmit(char cData)
+{
     /* Start transmission */
     SPDR = cData;
     /* Wait for transmission complete */
@@ -77,7 +83,9 @@ void SPI_MasterTransmit(char cData) {
 }
 
 
-void Control_LEDS(uint8_t value1, uint8_t value2) {
+void Control_LEDS(uint8_t value1, uint8_t value2)
+{
+
 
     PORTE |= (1<<PORTE4);
 
@@ -91,7 +99,7 @@ void Control_LEDS(uint8_t value1, uint8_t value2) {
     PORTE &= ~(1<<PORTE4);
 }
 
-void Changement_LEDS(uint8_t* value1, uint8_t* value2) {
+void Changement_LEDS(uint8_t* value1, uint8_t* value2){
   if(*value2==255)
   {
     *value1=0;
@@ -104,33 +112,41 @@ void Changement_LEDS(uint8_t* value1, uint8_t* value2) {
   }
 }
 
-ISR(INT0_vect) {
-    // Action
+ISR(INT0_vect){
+    //Faire le bidule
     detection_hall++;
+    /*if(detection_hall==0)
+    {
+      detection_hall=1;
+    }
+    else
+    {
+      detection_hall=0;
+    }*/
 }
 
-ISR(USART0_RX_vect) {
-  // Action
+ISR(USART0_RX_vect){
+    //Faire le bidule
     compteur_usart++;
     UDR0;
 }
 
-ISR(TIMER0_COMP_vect) {
-  // Action
+ISR(TIMER0_COMP_vect){
+    //Faire le bidule
     compteur_secondes++;
 }
 
-ISR(TIMER1_COMPA_vect) {
-  // Action
+ISR(TIMER1_COMPA_vect){
+    //Faire le bidule
     temps++;
 }
 
-ISR(TIMER3_COMPA_vect) {
-  // Action
+ISR(TIMER3_COMPA_vect){
+    //Faire le bidule
     compteur_debug++;
 }
 
-void set_interrupt(void) {
+void set_interrupt(void){
 
     //etre sûr que TWEN de TWCR est à 0
 
@@ -147,7 +163,7 @@ void set_interrupt(void) {
 
 }
 
-void init_secondes(void) {
+void init_secondes(void){
   TIMSK |=(1<<OCIE0);
 
   //Configurer
@@ -166,8 +182,8 @@ void init_temps(void){
   TCCR1B |= (1<<CS10)|(1<<WGM12)|(1<<WGM13);
 
   //Valeur
-  uint16_t  valeur = 200; //Pour aiguilles
-  //uint16_t  valeur = 1000;
+  //uint16_t  valeur = 200; //Pour aiguilles
+  uint16_t  valeur = 1000;
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
@@ -196,7 +212,7 @@ void init_debug(void){
 }
 
 // Fonction permettant de mettre à jour un chiffre
-void update_chiffre(uint16_t position_debut, uint16_t pos, uint16_t chiffre[], uint16_t matrice[])
+void update_chiffre(int position_debut, int pos, uint16_t chiffre[], uint16_t matrice[])
 {
   matrice[position_debut] = chiffre[0+pos];
   matrice[position_debut+1] = chiffre[1+pos];
@@ -208,31 +224,14 @@ void update_chiffre(uint16_t position_debut, uint16_t pos, uint16_t chiffre[], u
 
 int main(void)
 {
-uint16_t version = 1;
 compteur_usart = 0;
-uint16_t compteur_usart_precedent = 0;
+int compteur_usart_precedent = 0;
 
 compteur_secondes = 0;
-temps=0;
-SPI_MasterInit();
-uint16_t pas=3;
-//int compteur_debug_precedent=0;
-set_interrupt();
-init_secondes();
-init_temps();
-USART_Init(MYUBRR);
-
-
-uint8_t value1 = 0;
-uint8_t value2 = 0;
-// Heure choisie
-uint16_t secondes =0;
-uint16_t minutes = 50;
-uint16_t heures = 15;
-
-
-// -------------------- V1 Aiguilles INITIALISATION --------------------
-uint16_t heures_aiguille=0;
+/*int secondes =0;
+int minutes = 50;
+int heures = 15;
+//int heures_aiguille=0;
 
 secondes+=30;
 minutes+=30;
@@ -254,22 +253,57 @@ if (heures>=24)
 
 if(heures>=12)
 {
-  heures_aiguille=heures-12;
+  //heures_aiguille=heures-12;
 }
 else
 {
-  heures_aiguille=heures;
-}
+  //heures_aiguille=heures;
+}*/ // POUR AIGUILLE
 
 
-// -------------------- V2 Numérique INITIALISATION --------------------
+temps=0;
 
+
+SPI_MasterInit();
+
+//detection_hall=0;
+
+//int temps_precedent=0;
+int pas=3;
+
+//int compteur_debug_precedent=0;
+set_interrupt();
+init_secondes();
+init_temps();
+USART_Init(MYUBRR);
+
+
+uint8_t value1 = 0;
+uint8_t value2 = 0;
+
+/*uint8_t* pt_value1 = &value1;
+uint8_t* pt_value2 = &value2;
+Changement_LEDS(pt_value1,pt_value2);*/
+
+//---------------INITIALISATION VARIABLES V2-------------//
 uint16_t  matrice[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                          0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
                          4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+/*uint16_t un[3] = {0, 0, 992};
+uint16_t deux[3] = {736, 672, 928};
+uint16_t trois[3] = {992, 672, 672};
+uint16_t quatre[3] = {992, 128, 224};
+uint16_t cinq[3] = {928, 672, 736};
+uint16_t six[3] = {224, 160, 992};
+uint16_t sept[3] = {992, 32, 32};
+uint16_t huit[3] = {992, 672, 992};
+uint16_t neuf[3] = {992, 160, 224};
+
+uint16_t zero[3] = {992, 544, 992};*/
 
 uint16_t chiffres[30] = {992, 544, 992,
                           0, 0, 992,
@@ -282,33 +316,41 @@ uint16_t chiffres[30] = {992, 544, 992,
                                   992, 672, 992,
                                    992, 160, 224};
 
+
+
 uint16_t points[3] = {0, 320, 0};
 
-uint16_t chemin = 0;
+int chemin = 0;
 // Creation d'un pointeur pour parcourir la matrice
 uint16_t* pt_matrice_parcours;
+
 pt_matrice_parcours = matrice;
 
+//uint16_t* pt_dizaine_min = matrice;
 
-uint16_t pos_dizaine_min = 1;
-uint16_t pos_points_gauche = 4;
-uint16_t pos_unite_heure = 7;
-uint16_t pos_dizaine_heure = 11;
+int pos_dizaine_min = 1;
+int pos_points_gauche = 4;
+int pos_unite_heure = 7;
+int pos_dizaine_heure = 11;
 
-uint16_t pos_unite_sec = 47;
-uint16_t pos_dizaine_sec = 51;
-uint16_t pos_points_droit = 54;
-uint16_t pos_unite_min = 57;
+int pos_unite_sec = 47;
+int pos_dizaine_sec = 51;
+int pos_points_droit = 54;
+int pos_unite_min = 57;
 
-uint16_t secondes_unite = 0;
-uint16_t secondes_dizaine=3;
-uint16_t minutes_unite = 9;
-uint16_t minutes_dizaine = 5;
-uint16_t heures_unite = 4;
-uint16_t heures_dizaine = 1;
+int secondes_unite = 0;
+int secondes_dizaine=4;
+int minutes_unite = 9;
+int minutes_dizaine = 5;
+int heures_unite = 4;
+int heures_dizaine = 1;
+
+int secondes =30;
+int minutes = 59;
+int heures = 14;
 
 update_chiffre(pos_unite_sec, 3*0, chiffres, matrice);
-update_chiffre(pos_dizaine_sec, 3*3, chiffres, matrice);
+update_chiffre(pos_dizaine_sec, 3*4, chiffres, matrice);
 update_chiffre(pos_unite_min, 3*9, chiffres, matrice);
 update_chiffre(pos_dizaine_min, 3*5, chiffres, matrice);
 update_chiffre(pos_unite_heure, 3*4, chiffres, matrice);
@@ -318,54 +360,61 @@ update_chiffre(pos_points_droit, 0, points, matrice);
 update_chiffre(pos_points_gauche, 0,  points, matrice);
 
 
-uint16_t numero_afficher = 0;
-uint16_t pos_numero = pos_unite_sec;
 
-Control_LEDS(value2, value1);
+
+
+int numero_afficher = 0;
+int pos_numero = pos_unite_sec;
 while(1){
 
+
+  //matrice[pos_unite_sec+2] = chiffre[2+val_unite_sec*3];
+//update_chiffre(pos_unite_sec, val_unite_sec*3, chiffres, matrice);
 // Detection de l'effet hall et calcul du temps du tour et du pas pour /60
-  if( detection_hall>=1) {
+  if( detection_hall>=1)
+  {
 
     //Changement_LEDS(pt_value1,pt_value2);
+
    char string[64];
-   itoa(secondes_unite, string, 10);  //convert integer to string, radix=1
-   uart_send(string);
 
-// ------------- TEST BUG à ENLEVER ------------------ //
+    itoa(secondes_unite, string, 10);  //convert integer to string, radix=1
+    sprintf(string+strlen(string),"\n");
 
-  /* char string1[64];
-   char string2[64];
-
-           itoa(chiffres[0], string2, 10);
-     itoa(chiffres[secondes_unite], string1, 10);  //convert integer to string, radix=1
-
-      uart_send(string2);
-      uart_send(string1);*/
-//------------------------------------
+    uart_send(string);
+    //  char test[] = printf("te", template);
+      //USART_Receive();
     detection_hall=0;
     pas=temps/60;
     temps=0;
   }
 
 // Detection d'un envoi usart
-  if(compteur_usart_precedent!=compteur_usart) {
+  if(compteur_usart_precedent!=compteur_usart)
+  {
+      //Changement_LEDS(pt_value1,pt_value2);
 
+      //int num = 1234;
       char str_usart[64];
 
       itoa(20000, str_usart, 10);  //convert integer to string, radix=10
 
+      //char test[] = printf("te", template);
+
+      //USART_Receive();
 
       uart_send(str_usart);
 
       compteur_usart_precedent=compteur_usart;
       temps=0;
+      //temps_precedent=0;
+
     }
 
-// -------------------- V1 Aiguilles FONCTIONNEMENT --------------------
-if(version==1) {
+// V1 : Appel fonction aiguille
+
 // Calcul de l'heure souhaitee
-  if(secondes*1625==compteur_secondes)
+  /*if(secondes*1625==compteur_secondes)
   {
       //Changement_LEDS(pt_value1,pt_value2);
       secondes++;
@@ -385,39 +434,38 @@ if(version==1) {
           }
           if(heures>=12)
           {
-            heures_aiguille=heures-12;
+          //  heures_aiguille=heures-12;
           }
           else
           {
-            heures_aiguille=heures;
+          //  heures_aiguille=heures;
           }
         }
       }
     }
 
-if(pas*secondes<=temps && pas*secondes+20>=temps)
+if(pas*secondes<=temps && pas*secondes+6>=temps)
   {
       Control_LEDS(255,0);
     }
   else
   {
-    if(pas*minutes<=temps && pas*minutes+20>=temps){
+    if(pas*minutes<=temps && pas*minutes+6>=temps){
           Control_LEDS(255,0);
         }
         else{
-            if(pas*5*heures_aiguille<=temps && pas*5*heures_aiguille+20>=temps){
+            if(pas*5*heures_aiguille<=temps && pas*5*heures_aiguille+6>=temps){
               Control_LEDS(0,7);
               }
             else{
               Control_LEDS(0,0);
                 }
               }
-  }
-}
+  }*/
 
-// -------------------- V2 Numerique FONCTIONNEMENT --------------------
-if(version==2) {
+// V2 : matrice et chiffres
 // Calcul de l'heure souhaitee
+
 if(numero_afficher==0)
 {
   matrice[pos_numero] = chiffres[0];
@@ -573,6 +621,14 @@ if(!heures_dizaine)
             numero_afficher = heures_unite;
             pos_numero = pos_unite_heure;
           }
+          if(heures>=12)
+          {
+          //  heures_aiguille=heures-12;
+          }
+          else
+          {
+          //  heures_aiguille=heures;
+          }
         }
 
       }
@@ -589,9 +645,7 @@ if(!heures_dizaine)
 }
 value1 = *pt_matrice_parcours;
 value2 = *pt_matrice_parcours>>8;
-Control_LEDS(value2, value1);
-}
-
+  Control_LEDS(value2, value1);
 }
 
 }
