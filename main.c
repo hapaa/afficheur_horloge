@@ -341,18 +341,18 @@ int pos_unite_min = 57;
 int secondes_unite = 0;
 int secondes_dizaine=4;
 int minutes_unite = 9;
-int minutes_dizaine = 2;
+int minutes_dizaine = 5;
 int heures_unite = 4;
 int heures_dizaine = 1;
 
-int secondes =40;
-int minutes = 29;
+int secondes =30;
+int minutes = 59;
 int heures = 14;
 
 update_chiffre(pos_unite_sec, 3*0, chiffres, matrice);
-update_chiffre(pos_dizaine_sec, 3*4, chiffres, matrice);
+update_chiffre(pos_dizaine_sec, 3*3, chiffres, matrice);
 update_chiffre(pos_unite_min, 3*9, chiffres, matrice);
-update_chiffre(pos_dizaine_min, 3*2, chiffres, matrice);
+update_chiffre(pos_dizaine_min, 3*5, chiffres, matrice);
 update_chiffre(pos_unite_heure, 3*4, chiffres, matrice);
 update_chiffre(pos_dizaine_heure,3*1, chiffres, matrice);
 
@@ -596,7 +596,7 @@ if(!heures_dizaine)
           numero_afficher = minutes_dizaine;
           pos_numero = pos_dizaine_min;
         }
-        if(minutes==60)
+        if(minutes>=60)
         {
           minutes=0;
           minutes_unite=0;
@@ -613,7 +613,7 @@ if(!heures_dizaine)
           pos_numero = pos_dizaine_heure;
         }
 
-          if(heures==24)
+          if(heures>=24)
           {
             heures=0;
             heures_unite=0;
