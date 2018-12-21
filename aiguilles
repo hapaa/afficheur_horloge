@@ -1,0 +1,51 @@
+// V1 : Appel fonction aiguille
+
+// Calcul de l'heure souhaitee
+  /*if(secondes*1625==compteur_secondes)
+  {
+      //Changement_LEDS(pt_value1,pt_value2);
+      secondes++;
+      if (secondes==60)
+      {
+        compteur_secondes=0;
+        secondes=0;
+        minutes++;
+        if(minutes==60)
+        {
+          minutes=0;
+          heures++;
+
+          if(heures==24)
+          {
+            heures=0;
+          }
+          if(heures>=12)
+          {
+          //  heures_aiguille=heures-12;
+          }
+          else
+          {
+          //  heures_aiguille=heures;
+          }
+        }
+      }
+    }
+
+if(pas*secondes<=temps && pas*secondes+6>=temps)
+  {
+      Control_LEDS(255,0);
+    }
+  else
+  {
+    if(pas*minutes<=temps && pas*minutes+6>=temps){
+          Control_LEDS(255,0);
+        }
+        else{
+            if(pas*5*heures_aiguille<=temps && pas*5*heures_aiguille+6>=temps){
+              Control_LEDS(0,7);
+              }
+            else{
+              Control_LEDS(0,0);
+                }
+              }
+  }*/
