@@ -7,11 +7,13 @@
 
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
+int detection_hall;
+int compteur_usart;
+int compteur_secondes;
+int temps;
+int compteur_debug;
 
-uint16_t compteur_secondes;
-uint16_t compteur_usart;
-
-const static uint16_t chiffres[30] = {992, 544, 992,
+/*const static uint16_t chiffres[30] = {992, 544, 992,
                           0, 0, 992,
                             736, 672, 928,
                              992, 672, 672,
@@ -20,12 +22,13 @@ const static uint16_t chiffres[30] = {992, 544, 992,
                                 896, 640, 992,
                                  992, 32, 32,
                                   992, 672, 992,
-                                   992, 160, 224};
+                                   992, 160, 224};*/
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
 
-void USART_Init (unsigned int ubrr) {
+void USART_Init (unsigned int ubrr)
+{
 /* Set baud rate */
 UBRR0H = (unsigned char)(ubrr>>8);
 UBRR0L = (unsigned char)ubrr;
@@ -61,7 +64,8 @@ void uart_send(char *str) {
     }
 }
 
-void SPI_MasterInit(void) {
+void SPI_MasterInit(void)
+{
     PORTB|=(1<<DDB0);
 
     DDRE |= (1<<DDE4);
@@ -70,14 +74,19 @@ void SPI_MasterInit(void) {
     DDRE |= (1<<DDE5);
     PORTE &= ~(1<<PORTE5);
 
+
+
     /* Set MOSI and SCK output, all others input */
     DDRB = (1<<DDB2)|(1<<DDB1);
     /* Enable SPI, Master, set clock rate fck/16 */
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+
+
 }
 
 
-void SPI_MasterTransmit(char cData) {
+void SPI_MasterTransmit(char cData)
+{
     /* Start transmission */
     SPDR = cData;
     /* Wait for transmission complete */
@@ -85,14 +94,55 @@ void SPI_MasterTransmit(char cData) {
 }
 
 
+void Control_LEDS(uint8_t value1, uint8_t value2)
+{
 
-ISR(USART0_RX_vect) {
-  // Action
+
+    PORTE |= (1<<PORTE4);
+
+    SPI_MasterTransmit(value1);
+    SPI_MasterTransmit(value2);
+
+    PORTE |= (1<<PORTE5);
+
+    PORTE &= ~(1<<PORTE5);
+
+    PORTE &= ~(1<<PORTE4);
+}
+
+void Changement_LEDS(uint8_t* value1, uint8_t* value2){
+  if(*value2==255)
+  {
+    *value1=0;
+    *value2=0;
+  }
+  else
+  {
+    *value1=0;
+    *value2=255;
+  }
+}
+
+ISR(INT0_vect){
+    //Faire le bidule
+    detection_hall++;
+    /*if(detection_hall==0)
+    {
+      detection_hall=1;
+    }
+    else
+    {
+      detection_hall=0;
+    }*/
+}
+
+ISR(USART0_RX_vect){
+    //Faire le bidule
     compteur_usart++;
     UDR0;
 }
 
-void set_interrupt(void) {
+void set_interrupt(void){
 
     //etre sûr que TWEN de TWCR est à 0
 
@@ -109,38 +159,114 @@ void set_interrupt(void) {
 
 }
 
-// Fonction permettant de mettre à jour un chiffre
-void update_chiffre(uint16_t position_debut, uint16_t pos, uint16_t matrice[])
-{
-  matrice[position_debut] = chiffres[0+pos];
-  matrice[position_debut+1] = chiffres[1+pos];
-  matrice[position_debut+2] = chiffres[2+pos];
+void init_secondes(void){
+  TIMSK |=(1<<OCIE0);
+
+  //Configurer
+  TCCR0 |= (1<<CS01)|(1<<CS00);
+
+  uint8_t valeur = 250;
+  OCR0 = valeur;
+
 }
+
+void init_temps(void){
+  TIMSK |=(1<<OCIE1A);
+
+  //Configurer
+  TCCR1A |= (1<<WGM11)|(1<<WGM10);
+  TCCR1B |= (1<<CS10)|(1<<WGM12)|(1<<WGM13);
+
+  //Valeur
+  //uint16_t  valeur = 200; //Pour aiguilles
+  uint16_t  valeur = 1000;
+
+  uint8_t valeur_low = valeur;
+  uint8_t valeur_high = valeur>>8;
+
+  OCR1AH=valeur_high;
+  OCR1AL=valeur_low;
+
+}
+
+void init_debug(void){
+  ETIMSK |=(1<<OCIE3A);
+
+  //Configurer
+  TCCR3A |= (1<<WGM31)|(1<<WGM30);
+  TCCR3B |= (1<<CS30)|(1<<WGM32)|(1<<WGM33);
+
+  //Valeur
+  uint16_t  valeur = 60000;
+
+  uint8_t valeur_low = valeur;
+  uint8_t valeur_high = valeur>>8;
+
+  OCR3AH=valeur_high;
+  OCR3AL=valeur_low;
+
+}
+
+// Fonction permettant de mettre à jour un chiffre
+void update_chiffre(int position_debut, int pos, uint16_t chiffre[], uint16_t matrice[])
+{
+  matrice[position_debut] = chiffre[0+pos];
+  matrice[position_debut+1] = chiffre[1+pos];
+  matrice[position_debut+2] = chiffre[2+pos];
+}
+
+
+
 
 int main(void)
 {
-compteur_secondes = 0;
+
 SPI_MasterInit();
+
+//detection_hall=0;
+
+//int temps_precedent=0;
+
+//int compteur_debug_precedent=0;
 set_interrupt();
 USART_Init(MYUBRR);
 
-uint16_t secondes_unite = 0;
+//---------------INITIALISATION VARIABLES V2-------------//
+/*uint16_t  matrice[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
+                        4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0};*/
+
+
+int secondes_unite = 0;
 while(1){
+  if( detection_hall>=1)
+  {
 
-      char string[64];
-      itoa(chiffres[secondes_unite], string, 10);  //convert integer to string, radix=1
-      uart_send(string);
+    //Changement_LEDS(pt_value1,pt_value2);
 
-      if (secondes_unite<=10)
-      {
-        secondes_unite++;
-      }
-      else
-      {
-        secondes_unite=0;
-      }
+   char string[64];
 
+    itoa(secondes_unite, string, 10);  //convert integer to string, radix=1
+    sprintf(string+strlen(string),"\n");
 
+    uart_send(string);
+    //  char test[] = printf("te", template);
+      //USART_Receive();
+    //matrice[0] = chiffres[1];
+    detection_hall=0;
+    temps=0;
+  }
+  if (secondes_unite<=10)
+  {
+    secondes_unite++;
+  }
+  else
+  {
+    secondes_unite = 0;
+  }
 }
 
 }

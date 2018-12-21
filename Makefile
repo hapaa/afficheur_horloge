@@ -1,4 +1,4 @@
-file?=main_testbugvariable.c
+file?=main.c
 
 
 all: prog.hex
