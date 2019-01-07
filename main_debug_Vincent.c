@@ -32,19 +32,19 @@ UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);
 UCSR0C = (1<<USBS0)|(1<<UCSZ00)|(1<<UCSZ01);
 }
 
-void USART_Transmit( unsigned char data ) {
-/* Wait for empty transmit buffer */
+/*void USART_Transmit( unsigned char data ) {
+// Wait for empty transmit buffer
 while ( !( UCSR0A & (1<<UDRE0)) );
-/* Put data into buffer, sends the data */
+//Put data into buffer, sends the data
 UDR0 = data;
-}
+}*/
 
-unsigned char USART_Receive( void ) {
-/* Wait for data to be received */
+/*unsigned char USART_Receive( void ) {
+//Wait for data to be received
 //while ( !(UCSR0A & (1<<RXC0)) );
-/* Get and return received data from buffer */
+// Get and return received data from buffer
 return UDR0;
-}
+}*/
 
 void uart_send(char *str) {
 
@@ -56,7 +56,7 @@ void uart_send(char *str) {
     }
 }
 
-void SPI_MasterInit(void){
+/*void SPI_MasterInit(void){
     PORTB|=(1<<DDB0);
 
     DDRE |= (1<<DDE4);
@@ -67,42 +67,39 @@ void SPI_MasterInit(void){
 
 
 
-    /* Set MOSI and SCK output, all others input */
+    // Set MOSI and SCK output, all others input
     DDRB = (1<<DDB2)|(1<<DDB1);
-    /* Enable SPI, Master, set clock rate fck/16 */
+    // Enable SPI, Master, set clock rate fck/16
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+}*/
 
-
-}
-
-
-//void SPI_MasterTransmit(char cData){
-    /* Start transmission */
+/*void SPI_MasterTransmit(char cData){
+    // Start transmission
     SPDR = cData;
-    /* Wait for transmission complete */
+    // Wait for transmission complete
     while(!(SPSR & (1<<SPIF)));
-} //peut etre à mettre je sais pas
+} *///peut etre à mettre je sais pas
 
-ISR(INT0_vect){
+/*ISR(INT0_vect){
     //Faire le bidule
     detection_hall++;
-    /*if(detection_hall==0)
+    if(detection_hall==0)
     {
       detection_hall=1;
     }
     else
     {
       detection_hall=0;
-    }*/
+    }
 }
 
 ISR(USART0_RX_vect){
     //Faire le bidule
     compteur_usart++;
-    UDR0;
-}
+    //UDR0;
+}*/
 
-void set_interrupt(void){
+/*void set_interrupt(void){
 
     //etre sûr que TWEN de TWCR est à 0
 
@@ -117,44 +114,56 @@ void set_interrupt(void){
     sei();
     //SREG |= (1<<I); //Met le bit à 1 du global interrupt du status register, permet d'activer les interruptions
 
-}
+}*/
+
 
 int main(void)
 {
 compteur_usart = 0;
-uint16_t compteur_usart_precedent = 0;
+//uint16_t compteur_usart_precedent = 0;
 detection_hall=0;
-uint16_t variable_de_parcours =0;
-
+//uint16_t variable_de_parcours =0;
 //SPI_MasterInit(); //peut etre à mettre je sais pas
-set_interrupt();
+//set_interrupt();
 USART_Init(MYUBRR);
 
 //---------------INITIALISATION VARIABLES V2-------------//
-uint16_t  matrice[60] = {0, 0, 0, 0, 0, 320, 0, 0, 0, 0,
+/*uint16_t  matrice[60] = {0, 0, 0, 0, 0, 320, 0, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                          0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
                          4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 320, 0, 0, 0, 0};
+                         0, 0, 0, 0, 0, 320, 0, 0, 0, 0};*/
 
-char string_avant_while[64];
 char string_de_variable[10];
 char string_de_matrice_constante[10];
 char string_de_matrice_variable[10];
 char string_de_chiffre_constante[10];
 char string_de_chiffre_variable[10];
 
-itoa(variable_de_parcours, string_de_variable, 10);
-itoa(matrice[0], string_de_matrice_constante, 10);
-itoa(matrice[variable_de_parcours], string_de_matrice_variable, 10);
-itoa(chiffre[0], string_de_chiffre_constante, 10);
-itoa(chiffre[variable_de_parcours], string_de_chiffre_variable, 10);
+itoa(1, string_de_variable, 10);
+sprintf(string_de_variable+strlen(string_de_variable),"\n");
 
-sprintf(string_avant_while,"variable:%d\n", string_de_variable);
-uart_send(string_avant_while);
-sprintf(string_avant_while,"variable:%d\n", variable_de_parcours);
-uart_send(string_avant_while);
+itoa(2, string_de_matrice_variable, 10);
+sprintf(string_de_matrice_variable+strlen(string_de_matrice_variable),"\n");
+
+itoa(3, string_de_chiffre_constante, 10);
+sprintf(string_de_chiffre_constante+strlen(string_de_chiffre_constante),"\n");
+
+itoa(4, string_de_chiffre_variable, 10);
+sprintf(string_de_chiffre_variable+strlen(string_de_chiffre_variable),"\n");
+itoa(5, string_de_matrice_constante, 10);
+sprintf(string_de_matrice_constante+strlen(string_de_matrice_constante),"\n");
+
+
+ uart_send(string_de_variable);
+ uart_send(string_de_matrice_variable);
+ uart_send(string_de_chiffre_constante);
+ uart_send(string_de_chiffre_variable);
+ uart_send(string_de_matrice_constante);
+
+while(1){
+}
 
 
 // Creation d'un pointeur pour parcourir la matrice
@@ -162,7 +171,7 @@ uart_send(string_avant_while);
 
 pt_matrice_parcours = matrice;*/
 
-while(1){
+/*
   if(variable_de_parcours<=10)
   {
     variable_de_parcours++;
@@ -198,6 +207,6 @@ while(1){
     }
 
 
-}
+}*/
 
 }
