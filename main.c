@@ -228,7 +228,7 @@ void init_debug(void){
   TCCR3B |= (1<<CS30)|(1<<WGM32)|(1<<WGM33);
 
   //Valeur
-  uint16_t  valeur = 60000;
+  uint16_t  valeur = 10000;
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
@@ -356,6 +356,7 @@ uint16_t pas=3;
 set_interrupt();
 init_secondes();
 init_temps();
+init_debug();
 USART_Init(MYUBRR);
 
 
@@ -374,6 +375,8 @@ uint16_t  matrice[60] = {0, 0, 0, 0, 0, 320, 0, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                          0, 0, 0, 0, 0, 320, 0, 0, 0, 0};
 
+
+
 /*uint16_t un[3] = {0, 0, 992};
 uint16_t deux[3] = {736, 672, 928};
 uint16_t trois[3] = {992, 672, 672};
@@ -389,7 +392,7 @@ uint16_t heures_dizaine = 1;
 uint16_t heures_unite = 5;
 uint16_t minutes_dizaine = 5;
 uint16_t minutes_unite = 9;
-uint16_t secondes_dizaine=0;
+uint16_t secondes_dizaine = 0;
 uint16_t secondes_unite = 0;
 
 
@@ -417,12 +420,23 @@ update_chiffre(pos_dizaine_heure,heures_dizaine, matrice);
 //update_chiffre(pos_points_droit, 0, points, matrice);
 //update_chiffre(pos_points_gauche, 0,  points, matrice);
 
-
+uint16_t tfinwhile=0;
+uint16_t tdebutwhile=0;
+uint16_t twhile=0;
+uint16_t compteur_while=0;
 
 //int numero_afficher = 0;
 //int pos_numero = pos_unite_sec;
-while(1){
+tdebutwhile=compteur_debug;
+for(;;){
 
+if(compteur_while++>=10000)
+{
+  tfinwhile=compteur_debug;
+  twhile=tfinwhile-tdebutwhile;
+  tdebutwhile=compteur_debug;
+  compteur_while=0;
+}
   //update_chiffre(pos_unite_heure,heures_unite, matrice);
 
   //matrice[pos_unite_sec+2] = chiffre[2+val_unite_sec*3];
@@ -444,6 +458,17 @@ while(1){
     detection_hall=0;
     pas=temps/60;
     temps=0;
+}
+if(caractere_aiguille == 'c')
+{
+  char string[64];
+  itoa(twhile, string, 10);  //convert integer to string, radix=1
+  sprintf(string+strlen(string),"\n");
+
+  uart_send(string);
+  //  char test[] = printf("te", template);
+    //USART_Receive();
+  caractere_aiguille = 'e';
 }
   if(caractere_aiguille == 'a')
   {
@@ -668,14 +693,14 @@ if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
 }
 
   if(!aiguille){
-  update_chiffre(pos_unite_sec, secondes_unite, matrice);
-  update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
+    update_chiffre(pos_unite_sec, secondes_unite, matrice);
+    update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
 
-  update_chiffre(pos_unite_min, minutes_unite, matrice);
-  update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
+    update_chiffre(pos_unite_min, minutes_unite, matrice);
+    update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
 
-  update_chiffre(pos_unite_heure, heures_unite, matrice);
-  update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);
+    update_chiffre(pos_unite_heure, heures_unite, matrice);
+    update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);
 
   if(pas*chemin <= temps  && pas*chemin+1 >=temps)
   {
@@ -688,6 +713,7 @@ if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
   value1 = *pt_matrice_parcours;
   value2 = *pt_matrice_parcours>>8;
   Control_LEDS(value2, value1);
-  }
 }
+}
+
 }
