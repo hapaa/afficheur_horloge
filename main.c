@@ -428,8 +428,8 @@ while(1){
   //matrice[pos_unite_sec+2] = chiffre[2+val_unite_sec*3];
 //update_chiffre(pos_unite_sec, val_unite_sec*3, chiffres, matrice);
 // Detection de l'effet hall et calcul du temps du tour et du pas pour /60
-  if(detection_hall>=1)
-{
+  if(detection_hall >= 1)
+  {
 
     //Changement_LEDS(pt_value1,pt_value2);
 
@@ -444,27 +444,31 @@ while(1){
     detection_hall=0;
     pas=temps/60;
     temps=0;
-  }
-  if(caractere_aiguille== 'a')
+}
+  if(caractere_aiguille == 'a')
   {
     aiguille = 1;
     temps = 0;
     init_temps();
-    compteur_secondes=0;
-    secondes=0;
+    compteur_secondes = 0;
+    secondes = 0;
+    secondes_unite = 0;
+    secondes_dizaine = 0;
     if(heures > 12)
     {
-      heures_aiguille=heures-12;
+      heures_aiguille = heures-12;
     }
     caractere_aiguille = 'e';
   }
-  if(caractere_aiguille== 'b')
+  if(caractere_aiguille == 'b')
   {
     aiguille = 0;
     temps = 0;
     init_temps();
     compteur_secondes=0;
     secondes=0;
+    secondes_unite=0;
+    secondes_dizaine=0;
     caractere_aiguille = 'e';
   }
 // Detection d'un envoi usart
@@ -490,7 +494,7 @@ while(1){
     }*/
 
 // V1 : Appel fonction aiguille
-if (aiguille)
+/*if (aiguille)
 {
 
 
@@ -569,93 +573,121 @@ if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
                 }
               }
   }
-}
+}*/
 
 // V2 : matrice et chiffres
 // Calcul de l'heure souhaitee
-if(!aiguille)
-{
-  if((secondes+1)*1625==compteur_secondes)
-  {
-      //Changement_LEDS(pt_value1,pt_value2);
-      secondes++;
-      secondes_unite++;
-      //numero_afficher = secondes_unite;
-      //pos_numero = pos_unite_sec;
-      if(secondes_unite >=10){
-        secondes_unite = 0;
-        secondes_dizaine++;
-        //numero_afficher = secondes_dizaine;
-        //pos_numero = pos_dizaine_sec;
+  if((secondes+1)*1625==compteur_secondes){
+  //Changement_LEDS(pt_value1,pt_value2);
+   secondes++;
+   secondes_unite++;
+   if(secondes_unite >=10){
+     secondes_unite = 0;
+     secondes_dizaine++;
       }
-      if (secondes>=60) {
-        compteur_secondes=0;
-        secondes_unite=0;
-        secondes_dizaine=0;
-        secondes=0;
-        minutes++;
-        minutes_unite++;
-        if(minutes_unite >=10)
-        {
+   if(secondes>=60){
+      compteur_secondes=0;
+      secondes_unite=0;
+      secondes_dizaine=0;
+      secondes=0;
+      minutes++;
+      minutes_unite++;
+      if(minutes_unite >=10){
           minutes_unite = 0;
           minutes_dizaine++;
         }
-
-        if(minutes>=60)
-        {
+      if(minutes>=60){
           minutes=0;
           minutes_unite=0;
           minutes_dizaine=0;
           heures++;
           heures_unite++;
-        if(heures_unite >=10)
-        {
+          if(heures_unite >=10){
           heures_unite = 0;
           heures_dizaine++;
-
         }
-
-          if(heures>=24)
-          {
+          if(heures>=24){
             heures=0;
             heures_unite=0;
-            heures_dizaine=0;
-
+            heures_dizaine=0;}
+          if(heures>=12){
+           heures_aiguille=heures-12;
           }
-          if(heures>=12)
-          {
-          //  heures_aiguille=heures-12;
-          }
-          else
-          {
-          //  heures_aiguille=heures;
-          }
+          else{
+            heures_aiguille=heures;}
         }
-
       }
+    }
 
+  if (aiguille){
+  if (secondes >=30)
+  {
+    temp_secondes = secondes + 30 - 60;
+  }
+  else
+  {
+    temp_secondes = secondes + 30;
+  }
+
+  if (minutes >=30)
+  {
+    temp_minutes = minutes + 30 - 60;
+  }
+  else
+  {
+    temp_minutes = minutes + 30;
+  }
+
+  if (heures_aiguille >=6)
+  {
+    temp_heures = heures_aiguille + 6 - 12;
+  }
+  else
+  {
+    temp_heures = heures_aiguille + 6;
+  }
+
+  if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
+  {
+        Control_LEDS(0,252);
+      }
+  else
+  {
+      if(pas*temp_minutes<=temps && pas*temp_minutes+6>=temps){
+            Control_LEDS(0,252);
+          }
+          else{
+              if(pas*5*temp_heures<=temps && pas*5*temp_heures+6>=temps){
+                Control_LEDS(0,7);
+                }
+              else{
+                Control_LEDS(0,0);
+                  }
+                }
+    }
 }
-update_chiffre(pos_unite_sec, secondes_unite, matrice);
-update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
 
-update_chiffre(pos_unite_min, minutes_unite, matrice);
-update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
+  if(!aiguille){
+  update_chiffre(pos_unite_sec, secondes_unite, matrice);
+  update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
 
-update_chiffre(pos_unite_heure, heures_unite, matrice);
-update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);
+  update_chiffre(pos_unite_min, minutes_unite, matrice);
+  update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
+
+  update_chiffre(pos_unite_heure, heures_unite, matrice);
+  update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);
 
   if(pas*chemin <= temps  && pas*chemin+1 >=temps)
   {
-  pt_matrice_parcours++;
-  chemin++;
-  if (chemin==60)
-  {chemin=0;
-  pt_matrice_parcours = matrice;}
-
-}
-value1 = *pt_matrice_parcours;
-value2 = *pt_matrice_parcours>>8;
+    pt_matrice_parcours++;
+    chemin++;
+    if (chemin==60)
+    {chemin=0;
+    pt_matrice_parcours = matrice;}
+  }
+  value1 = *pt_matrice_parcours;
+  value2 = *pt_matrice_parcours>>8;
   Control_LEDS(value2, value1);
-}
+  }
 }
 }
