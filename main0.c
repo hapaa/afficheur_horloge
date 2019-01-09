@@ -325,6 +325,7 @@ int main(void)
   {
     effet_hall(&pas, &temps);
 
+    // incrementer secondes
     if ((secondes + 1) * 1625 == compteur_secondes)
     {
       secondes++;

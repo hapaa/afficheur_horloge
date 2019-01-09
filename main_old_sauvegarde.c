@@ -10,19 +10,8 @@
 int detection_hall;
 int compteur_usart;
 int compteur_secondes;
-int temps;
+int compteur_temps;
 int compteur_debug;
-
-/*const static uint16_t chiffres[30] = {992, 544, 992,
-                          0, 0, 992,
-                            736, 672, 928,
-                             992, 672, 672,
-                              992, 128, 224,
-                               928, 672, 736,
-                                896, 640, 992,
-                                 992, 32, 32,
-                                  992, 672, 992,
-                                   992, 160, 224};*/
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
@@ -142,6 +131,21 @@ ISR(USART0_RX_vect){
     UDR0;
 }
 
+ISR(TIMER0_COMP_vect){
+    //Faire le bidule
+    compteur_secondes++;
+}
+
+ISR(TIMER1_COMPA_vect){
+    //Faire le bidule
+    compteur_temps++;
+}
+
+ISR(TIMER3_COMPA_vect){
+    //Faire le bidule
+    compteur_debug++;
+}
+
 void set_interrupt(void){
 
     //etre sûr que TWEN de TWCR est à 0
@@ -178,8 +182,7 @@ void init_temps(void){
   TCCR1B |= (1<<CS10)|(1<<WGM12)|(1<<WGM13);
 
   //Valeur
-  //uint16_t  valeur = 200; //Pour aiguilles
-  uint16_t  valeur = 1000;
+  uint16_t  valeur = 5416;
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
@@ -207,66 +210,129 @@ void init_debug(void){
 
 }
 
-// Fonction permettant de mettre à jour un chiffre
-void update_chiffre(int position_debut, int pos, uint16_t chiffre[], uint16_t matrice[])
-{
-  matrice[position_debut] = chiffre[0+pos];
-  matrice[position_debut+1] = chiffre[1+pos];
-  matrice[position_debut+2] = chiffre[2+pos];
-}
-
-
-
-
 int main(void)
 {
-
+/*USART_Init(MYUBRR);
+while (1){
+USART_Transmit(USART_Receive()+1);
+}*/
+compteur_usart = 0;
+compteur_secondes = 0;
+compteur_temps=0;
+int compteur_usart_precedent = 0;
 SPI_MasterInit();
 
 //detection_hall=0;
 
-//int temps_precedent=0;
+int compteur_secondes_precedent=0;
+
+int compteur_temps_precedent=0;
+//int compteur_pas=4;
 
 //int compteur_debug_precedent=0;
 set_interrupt();
+init_secondes();
+init_temps();
 USART_Init(MYUBRR);
 
-//---------------INITIALISATION VARIABLES V2-------------//
-/*uint16_t  matrice[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
-                        4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0};*/
+
+/*uint8_t value1 = 0;
+uint8_t value2 = 0;
+
+uint8_t* pt_value1 = &value1;
+uint8_t* pt_value2 = &value2;
+Changement_LEDS(pt_value1,pt_value2);*/
 
 
-int secondes_unite = 0;
 while(1){
-  if( detection_hall>=1)
-  {
 
-    //Changement_LEDS(pt_value1,pt_value2);
+    if( detection_hall>=1)
+    {
 
-   char string[64];
+      //Changement_LEDS(pt_value1,pt_value2);
 
-    itoa(secondes_unite, string, 10);  //convert integer to string, radix=1
-    sprintf(string+strlen(string),"\n");
+      char string[64];
 
-    uart_send(string);
+      itoa(compteur_temps, string, 10);  //convert integer to string, radix=1
+      sprintf(string+strlen(string),"\n");
+
+
+
+
+      uart_send(string);
+
+      //  char test[] = printf("te", template);
+
+        //USART_Receive();
+
+
+        detection_hall=0;
+        compteur_temps_precedent=0;
+        compteur_temps=0;
+
+    }
+
+
+
+    /*uint8_t testeur = PIND & (1<<PORTD0);
+    if(testeur){
+
+      Control_LEDS(255,0);
+
+    }
+    else
+    {
+      Control_LEDS(0,255);
+    }*/
+
+
+    if(compteur_usart_precedent!=compteur_usart)
+    {
+      //Changement_LEDS(pt_value1,pt_value2);
+
+      //int num = 1234;
+      char str_usart[64];
+
+      itoa(20000, str_usart, 10);  //convert integer to string, radix=10
+
     //  char test[] = printf("te", template);
+
       //USART_Receive();
-    //matrice[0] = chiffres[1];
-    detection_hall=0;
-    temps=0;
-  }
-  if (secondes_unite<=10)
-  {
-    secondes_unite++;
-  }
-  else
-  {
-    secondes_unite = 0;
-  }
+
+
+      uart_send(str_usart);
+
+      compteur_usart_precedent=compteur_usart;
+      compteur_temps=0;
+      compteur_temps_precedent=0;
+
+    }
+
+    if(compteur_secondes_precedent*1625==compteur_secondes)
+    {
+      //Changement_LEDS(pt_value1,pt_value2);
+
+      compteur_secondes_precedent++;
+      if (compteur_secondes_precedent==61)
+      {
+        compteur_secondes=0;
+        compteur_secondes_precedent=0;
+      }
+    }
+
+    if(89<=compteur_temps && 93>=compteur_temps)
+    {
+      Control_LEDS(255,0);
+      compteur_temps_precedent++;
+    }
+    else
+    {
+      Control_LEDS(0,0);
+    }
+
+
+
+
 }
 
 }

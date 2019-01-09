@@ -7,28 +7,37 @@
 
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
-
 uint16_t detection_hall;
 uint16_t compteur_usart;
 uint16_t compteur_secondes;
 uint16_t temps;
 uint16_t compteur_debug;
+unsigned char caractere_aiguille;
 
-const static uint16_t chiffres[30] = {992, 544, 992,
-                          0, 0, 992,
-                            736, 672, 928,
-                             992, 672, 672,
-                              992, 128, 224,
-                               928, 672, 736,
-                                896, 640, 992,
-                                 992, 32, 32,
-                                  992, 672, 992,
-                                   992, 160, 224};
+/*static const uint16_t chiffres[30] = {992, 544, 992,
+                                      0, 0, 992,
+                                      736, 672, 928,
+                                      992, 672, 672,
+                                      992, 128, 224,
+                                      928, 672, 736,
+                                      896, 640, 992,
+                                      992, 32, 32,
+                                      992, 672, 992,
+                                      992, 160, 224};*/
+
+static const uint16_t pos_unite_sec = 47;
+static const uint16_t pos_dizaine_sec = 51;
+static const uint16_t pos_unite_min = 57;
+static const uint16_t pos_dizaine_min = 1;
+static const uint16_t pos_unite_heure = 7;
+static const uint16_t pos_dizaine_heure = 11;
+uint16_t aiguille = 0;
 
 //DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
 //PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
 
-void USART_Init (unsigned int ubrr) {
+void USART_Init (unsigned int ubrr)
+{
 /* Set baud rate */
 UBRR0H = (unsigned char)(ubrr>>8);
 UBRR0L = (unsigned char)ubrr;
@@ -64,7 +73,8 @@ void uart_send(char *str) {
     }
 }
 
-void SPI_MasterInit(void) {
+void SPI_MasterInit(void)
+{
     PORTB|=(1<<DDB0);
 
     DDRE |= (1<<DDE4);
@@ -73,14 +83,19 @@ void SPI_MasterInit(void) {
     DDRE |= (1<<DDE5);
     PORTE &= ~(1<<PORTE5);
 
+
+
     /* Set MOSI and SCK output, all others input */
     DDRB = (1<<DDB2)|(1<<DDB1);
     /* Enable SPI, Master, set clock rate fck/16 */
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+
+
 }
 
 
-void SPI_MasterTransmit(char cData) {
+void SPI_MasterTransmit(char cData)
+{
     /* Start transmission */
     SPDR = cData;
     /* Wait for transmission complete */
@@ -88,7 +103,9 @@ void SPI_MasterTransmit(char cData) {
 }
 
 
-void Control_LEDS(uint8_t value1, uint8_t value2) {
+void Control_LEDS(uint8_t value1, uint8_t value2)
+{
+
 
     PORTE |= (1<<PORTE4);
 
@@ -102,7 +119,7 @@ void Control_LEDS(uint8_t value1, uint8_t value2) {
     PORTE &= ~(1<<PORTE4);
 }
 
-void Changement_LEDS(uint8_t* value1, uint8_t* value2) {
+void Changement_LEDS(uint8_t* value1, uint8_t* value2){
   if(*value2==255)
   {
     *value1=0;
@@ -115,33 +132,41 @@ void Changement_LEDS(uint8_t* value1, uint8_t* value2) {
   }
 }
 
-ISR(INT0_vect) {
-    // Action
+ISR(INT0_vect){
+    //Faire le bidule
     detection_hall++;
+    /*if(detection_hall==0)
+    {
+      detection_hall=1;
+    }
+    else
+    {
+      detection_hall=0;
+    }*/
 }
 
-ISR(USART0_RX_vect) {
-  // Action
+ISR(USART0_RX_vect){
+    //Faire le bidule
     compteur_usart++;
-    UDR0;
+    caractere_aiguille = UDR0;
 }
 
-ISR(TIMER0_COMP_vect) {
-  // Action
+ISR(TIMER0_COMP_vect){
+    //Faire le bidule
     compteur_secondes++;
 }
 
-ISR(TIMER1_COMPA_vect) {
-  // Action
+ISR(TIMER1_COMPA_vect){
+    //Faire le bidule
     temps++;
 }
 
-ISR(TIMER3_COMPA_vect) {
-  // Action
+ISR(TIMER3_COMPA_vect){
+    //Faire le bidule
     compteur_debug++;
 }
 
-void set_interrupt(void) {
+void set_interrupt(void){
 
     //etre sûr que TWEN de TWCR est à 0
 
@@ -158,7 +183,7 @@ void set_interrupt(void) {
 
 }
 
-void init_secondes(void) {
+void init_secondes(void){
   TIMSK |=(1<<OCIE0);
 
   //Configurer
@@ -176,9 +201,16 @@ void init_temps(void){
   TCCR1A |= (1<<WGM11)|(1<<WGM10);
   TCCR1B |= (1<<CS10)|(1<<WGM12)|(1<<WGM13);
 
+   uint16_t  valeur = 200;
   //Valeur
-  //uint16_t  valeur = 200; //Pour aiguilles
-  uint16_t  valeur = 1000; //Pour umérique
+  if(aiguille)
+  {
+  valeur = 200; //Pour aiguilles
+}
+else
+{
+  valeur = 1000;
+}
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
@@ -196,7 +228,7 @@ void init_debug(void){
   TCCR3B |= (1<<CS30)|(1<<WGM32)|(1<<WGM33);
 
   //Valeur
-  uint16_t  valeur = 60000;
+  uint16_t  valeur = 10000;
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur>>8;
@@ -209,62 +241,97 @@ void init_debug(void){
 // Fonction permettant de mettre à jour un chiffre
 void update_chiffre(uint16_t position_debut, uint16_t pos, uint16_t matrice[])
 {
-  matrice[position_debut] = chiffres[0+pos];
-  matrice[position_debut+1] = chiffres[1+pos];
-  matrice[position_debut+2] = chiffres[2+pos];
+  if(pos == 0)
+  {
+    matrice[position_debut] = 992;
+    matrice[position_debut+1] = 544;
+    matrice[position_debut+2] = 992;
+  }
+  if(pos == 1)
+  {
+    matrice[position_debut] = 0;
+    matrice[position_debut+1] = 0;
+    matrice[position_debut+2] = 992;
+  }
+  if(pos==2)
+  {
+    matrice[position_debut] = 736;
+    matrice[position_debut+1] = 672;
+    matrice[position_debut+2] = 928;
+  }
+  if (pos==3)
+  {
+    matrice[position_debut] = 992;
+    matrice[position_debut+1] = 672;
+    matrice[position_debut+2] = 672;
+  }
+
+  if (pos==4)
+  {
+    matrice[position_debut] = 992;
+    matrice[position_debut+1] = 128;
+    matrice[position_debut+2] = 224;
+  }
+  if (pos==5)
+  {
+    matrice[position_debut] = 928;
+    matrice[position_debut+1] = 672;
+    matrice[position_debut+2] = 736;
+  }
+
+  if (pos==6)
+  {
+    matrice[position_debut] = 896;
+    matrice[position_debut+1] = 640;
+    matrice[position_debut+2] = 992;
+  }
+  if (pos==7)
+  {
+    matrice[position_debut] = 992;
+    matrice[position_debut+1] = 32;
+    matrice[position_debut+2] = 32;
+  }
+  if (pos==8)
+  {
+    matrice[position_debut] = 992;
+    matrice[position_debut+1] = 672;
+    matrice[position_debut+2] = 992;
+  }
+  if (pos == 9)
+  {
+    matrice[position_debut] = 992;
+    matrice[position_debut+1] = 160;
+    matrice[position_debut+2] = 224;
+  }
 }
-
-
-
 
 int main(void)
 {
-uint16_t version = 2;
 compteur_usart = 0;
-uint16_t compteur_usart_precedent = 0;
+//uint16_t compteur_usart_precedent = 0;
 
 compteur_secondes = 0;
-temps=0;
-SPI_MasterInit();
-uint16_t pas=3;
-//int compteur_debug_precedent=0;
-set_interrupt();
-init_secondes();
-init_temps();
-USART_Init(MYUBRR);
-
-
-uint8_t value1 = 0;
-uint8_t value2 = 0;
-// Heure choisie
-uint16_t secondes =30;
+uint16_t secondes =0;
 uint16_t minutes = 59;
-uint16_t heures = 14;
-
-
-// -------------------- V1 Aiguilles INITIALISATION --------------------
+uint16_t heures = 15;
 uint16_t heures_aiguille=0;
 
-if(version==1){
+uint16_t temp_secondes = 0;
+uint16_t temp_minutes = 0;
+uint16_t temp_heures = 0;
 
-secondes+=30;
-minutes+=30;
-heures+=6;
 
 if(secondes>=60){
   secondes-=60;
 }
-
 if(minutes>=60)
 {
   minutes-=60;
 }
-
 if (heures>=24)
 {
   heures-=24;
 }
-
 if(heures>=12)
 {
   heures_aiguille=heures-12;
@@ -272,101 +339,190 @@ if(heures>=12)
 else
 {
   heures_aiguille=heures;
-}
-}
+} // POUR AIGUILLE
 
-// -------------------- V2 Numérique INITIALISATION --------------------
 
-uint16_t  matrice[60] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+temps=0;
+
+
+SPI_MasterInit();
+
+//detection_hall=0;
+
+//int temps_precedent=0;
+uint16_t pas=3;
+
+//int compteur_debug_precedent=0;
+set_interrupt();
+init_secondes();
+init_temps();
+init_debug();
+USART_Init(MYUBRR);
+
+
+uint8_t value1 = 0;
+uint8_t value2 = 0;
+
+/*uint8_t* pt_value1 = &value1;
+uint8_t* pt_value2 = &value2;
+Changement_LEDS(pt_value1,pt_value2);*/
+
+//---------------INITIALISATION VARIABLES V2-------------//
+uint16_t  matrice[60] = {0, 0, 0, 0, 0, 320, 0, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                          0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
                          4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                         0, 0, 0, 0, 0, 320, 0, 0, 0, 0};
 
 
-//uint16_t points[3] = {0, 320, 0};
+
+/*uint16_t un[3] = {0, 0, 992};
+uint16_t deux[3] = {736, 672, 928};
+uint16_t trois[3] = {992, 672, 672};
+uint16_t quatre[3] = {992, 128, 224};
+uint16_t cinq[3] = {928, 672, 736};
+uint16_t six[3] = {224, 160, 992};
+uint16_t sept[3] = {992, 32, 32};
+uint16_t huit[3] = {992, 672, 992};
+uint16_t neuf[3] = {992, 160, 224};
+uint16_t zero[3] = {992, 544, 992};*/
+
+uint16_t heures_dizaine = 1;
+uint16_t heures_unite = 5;
+uint16_t minutes_dizaine = 5;
+uint16_t minutes_unite = 9;
+uint16_t secondes_dizaine = 0;
+uint16_t secondes_unite = 0;
+
 
 uint16_t chemin = 0;
 // Creation d'un pointeur pour parcourir la matrice
 uint16_t* pt_matrice_parcours;
+
 pt_matrice_parcours = matrice;
 
+//uint16_t* pt_dizaine_min = matrice;
 
-uint16_t pos_dizaine_min = 1;
-//uint16_t pos_points_gauche = 4;
-uint16_t pos_unite_heure = 7;
-uint16_t pos_dizaine_heure = 11;
 
-uint16_t pos_unite_sec = 47;
-uint16_t pos_dizaine_sec = 51;
-// uint16_t pos_points_droit = 54;
-uint16_t pos_unite_min = 57;
 
-uint16_t secondes_unite = 0;
-uint16_t secondes_dizaine=3;
-uint16_t minutes_unite = 9;
-uint16_t minutes_dizaine = 5;
-uint16_t heures_unite = 4;
-uint16_t heures_dizaine = 1;
+/*uint16_t secondes =40;
+uint16_t minutes = 59;
+uint16_t heures = 14;*/
 
-update_chiffre(pos_unite_sec, 3*0, matrice);
-update_chiffre(pos_dizaine_sec, 3*3, matrice);
-update_chiffre(pos_unite_min, 3*9, matrice);
-update_chiffre(pos_dizaine_min, 3*5, matrice);
-update_chiffre(pos_unite_heure, 3*4, matrice);
-update_chiffre(pos_dizaine_heure,3*1, matrice);
+update_chiffre(pos_unite_sec, secondes_unite, matrice);
+update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
+update_chiffre(pos_unite_min, minutes_unite, matrice);
+update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
+update_chiffre(pos_unite_heure, heures_unite, matrice);
+update_chiffre(pos_dizaine_heure,heures_dizaine, matrice);
 
 //update_chiffre(pos_points_droit, 0, points, matrice);
 //update_chiffre(pos_points_gauche, 0,  points, matrice);
 
+uint16_t tfinwhile=0;
+uint16_t tdebutwhile=0;
+uint16_t twhile=0;
+uint16_t compteur_while=0;
 
-uint16_t numero_afficher = 0;
-uint16_t pos_numero = pos_unite_sec;
+//int numero_afficher = 0;
+//int pos_numero = pos_unite_sec;
+tdebutwhile=compteur_debug;
+for(;;){
 
-Control_LEDS(value2, value1);
-while(1){
+if(compteur_while++>=10000)
+{
+  tfinwhile=compteur_debug;
+  twhile=tfinwhile-tdebutwhile;
+  tdebutwhile=compteur_debug;
+  compteur_while=0;
+}
+  //update_chiffre(pos_unite_heure,heures_unite, matrice);
 
+  //matrice[pos_unite_sec+2] = chiffre[2+val_unite_sec*3];
+//update_chiffre(pos_unite_sec, val_unite_sec*3, chiffres, matrice);
 // Detection de l'effet hall et calcul du temps du tour et du pas pour /60
-  if( detection_hall>=1) {
+  if(detection_hall >= 1)
+  {
 
     //Changement_LEDS(pt_value1,pt_value2);
-   char string[64];
-   itoa(secondes_unite, string, 10);  //convert integer to string, radix=1
-   uart_send(string);
 
-// ------------- TEST BUG à ENLEVER ------------------ //
+   /*char string[64];
 
-  /*char string1[64];
-   char string2[64];
+    itoa(secondes_unite, string, 10);  //convert integer to string, radix=1
+    sprintf(string+strlen(string),"\n");
 
-           itoa(chiffres[0], string2, 10);
-     itoa(chiffres[secondes_unite], string1, 10);  //convert integer to string, radix=1
-
-      uart_send(string2);
-      uart_send(string1);*/
-//------------------------------------
+    uart_send(string);*/
+    //  char test[] = printf("te", template);
+      //USART_Receive();
     detection_hall=0;
     pas=temps/60;
     temps=0;
+}
+if(caractere_aiguille == 'c')
+{
+  char string[64];
+  itoa(twhile, string, 10);  //convert integer to string, radix=1
+  sprintf(string+strlen(string),"\n");
+
+  uart_send(string);
+  //  char test[] = printf("te", template);
+    //USART_Receive();
+  caractere_aiguille = 'e';
+}
+  if(caractere_aiguille == 'a')
+  {
+    aiguille = 1;
+    temps = 0;
+    init_temps();
+    compteur_secondes = 0;
+    secondes = 0;
+    secondes_unite = 0;
+    secondes_dizaine = 0;
+    if(heures > 12)
+    {
+      heures_aiguille = heures-12;
+    }
+    caractere_aiguille = 'e';
   }
-
+  if(caractere_aiguille == 'b')
+  {
+    aiguille = 0;
+    temps = 0;
+    init_temps();
+    compteur_secondes=0;
+    secondes=0;
+    secondes_unite=0;
+    secondes_dizaine=0;
+    caractere_aiguille = 'e';
+  }
 // Detection d'un envoi usart
-  if(compteur_usart_precedent!=compteur_usart) {
+  /*if(compteur_usart_precedent!=compteur_usart)
+  {
+      //Changement_LEDS(pt_value1,pt_value2);
 
+      //int num = 1234;
       char str_usart[64];
 
       itoa(20000, str_usart, 10);  //convert integer to string, radix=10
 
+      //char test[] = printf("te", template);
+
+      //USART_Receive();
 
       uart_send(str_usart);
 
       compteur_usart_precedent=compteur_usart;
       temps=0;
-    }
+      //temps_precedent=0;
 
-// -------------------- V1 Aiguilles FONCTIONNEMENT --------------------
-if(version==1) {
+    }*/
+
+// V1 : Appel fonction aiguille
+/*if (aiguille)
+{
+
+
 // Calcul de l'heure souhaitee
   if(secondes*1625==compteur_secondes)
   {
@@ -381,7 +537,6 @@ if(version==1) {
         {
           minutes=0;
           heures++;
-
           if(heures==24)
           {
             heures=0;
@@ -398,17 +553,44 @@ if(version==1) {
       }
     }
 
-if(pas*secondes<=temps && pas*secondes+20>=temps)
+if (secondes >=30)
+{
+  temp_secondes = secondes + 30 - 60;
+}
+else
+{
+  temp_secondes = secondes + 30;
+}
+
+if (minutes >=30)
+{
+  temp_minutes = minutes + 30 - 60;
+}
+else
+{
+  temp_minutes = minutes + 30;
+}
+
+if (heures_aiguille >=6)
+{
+  temp_heures = heures_aiguille + 6 - 12;
+}
+else
+{
+  temp_heures = heures_aiguille + 6;
+}
+
+if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
   {
-      Control_LEDS(255,0);
+      Control_LEDS(0,252);
     }
   else
   {
-    if(pas*minutes<=temps && pas*minutes+20>=temps){
-          Control_LEDS(255,0);
+    if(pas*temp_minutes<=temps && pas*temp_minutes+6>=temps){
+          Control_LEDS(0,252);
         }
         else{
-            if(pas*5*heures_aiguille<=temps && pas*5*heures_aiguille+20>=temps){
+            if(pas*5*temp_heures<=temps && pas*5*temp_heures+6>=temps){
               Control_LEDS(0,7);
               }
             else{
@@ -416,185 +598,122 @@ if(pas*secondes<=temps && pas*secondes+20>=temps)
                 }
               }
   }
-}
+}*/
 
-// -------------------- V2 Numerique FONCTIONNEMENT --------------------
-if(version==2) {
+// V2 : matrice et chiffres
 // Calcul de l'heure souhaitee
-if(numero_afficher==0)
-{
-  matrice[pos_numero] = chiffres[0];
-  matrice[pos_numero + 1] = chiffres[1];
-  matrice[pos_numero + 2] = chiffres[2];
-}
-if(numero_afficher==1)
-{
-  matrice[pos_numero] = chiffres[3];
-  matrice[pos_numero + 1] = chiffres[4];
-  matrice[pos_numero + 2] = chiffres[5];
-}
-if(numero_afficher==2)
-{
-  matrice[pos_numero] = chiffres[6];
-  matrice[pos_numero + 1] = chiffres[7];
-  matrice[pos_numero + 2] = chiffres[8];
-}
-if(numero_afficher==3)
-{
-  matrice[pos_numero] = chiffres[9];
-  matrice[pos_numero + 1] = chiffres[10];
-  matrice[pos_numero + 2] = chiffres[11];
-}
-if(numero_afficher==4)
-{
-  matrice[pos_numero] = chiffres[12];
-  matrice[pos_numero + 1] = chiffres[13];
-  matrice[pos_numero + 2] = chiffres[14];
-}
-if(numero_afficher==5)
-{
-  matrice[pos_numero] = chiffres[15];
-  matrice[pos_numero + 1] = chiffres[16];
-  matrice[pos_numero + 2] = chiffres[17];
-}
-if(numero_afficher==6)
-{
-  matrice[pos_numero] = chiffres[18];
-  matrice[pos_numero + 1] = chiffres[19];
-  matrice[pos_numero + 2] = chiffres[20];
-}
-if(numero_afficher==7)
-{
-  matrice[pos_numero] = chiffres[21];
-  matrice[pos_numero + 1] = chiffres[22];
-  matrice[pos_numero + 2] = chiffres[23];
-}
-if(numero_afficher==8)
-{
-  matrice[pos_numero] = chiffres[24];
-  matrice[pos_numero + 1] = chiffres[25];
-  matrice[pos_numero + 2] = chiffres[26];
-}
-if(numero_afficher==9)
-{
-  matrice[pos_numero] = chiffres[27];
-  matrice[pos_numero + 1] = chiffres[28];
-  matrice[pos_numero + 2] = chiffres[29];
-}
-
-if(!secondes_unite)
-{
-  matrice[pos_unite_sec] = chiffres[0];
-  matrice[pos_unite_sec + 1] = chiffres[1];
-  matrice[pos_unite_sec + 2] = chiffres[2];
-}
-if(!secondes_dizaine)
-{
-  matrice[pos_dizaine_sec] = chiffres[0];
-  matrice[pos_dizaine_sec + 1] = chiffres[1];
-  matrice[pos_dizaine_sec + 2] = chiffres[2];
-}
-if(!minutes_unite)
-{
-  matrice[pos_unite_min] = chiffres[0];
-  matrice[pos_unite_min + 1] = chiffres[1];
-  matrice[pos_unite_min + 2] = chiffres[2];
-}
-if(!minutes_dizaine)
-{
-  matrice[pos_dizaine_min] = chiffres[0];
-  matrice[pos_dizaine_min + 1] = chiffres[1];
-  matrice[pos_dizaine_min + 2] = chiffres[2];
-}
-if(!heures_unite)
-{
-  matrice[pos_unite_heure] = chiffres[0];
-  matrice[pos_unite_heure + 1] = chiffres[1];
-  matrice[pos_unite_heure + 2] = chiffres[2];
-}
-if(!heures_dizaine)
-{
-  matrice[pos_dizaine_heure] = chiffres[0];
-  matrice[pos_dizaine_heure + 1] = chiffres[1];
-  matrice[pos_dizaine_heure + 2] = chiffres[2];
-}
-
-
-  if((secondes+1)*1625==compteur_secondes)
-  {
-      //Changement_LEDS(pt_value1,pt_value2);
-      secondes++;
-      secondes_unite++;
-      numero_afficher = secondes_unite;
-      pos_numero = pos_unite_sec;
-      if(secondes_unite >=10)
-      {
-        secondes_unite = 0;
-        secondes_dizaine++;
-        numero_afficher = secondes_dizaine;
-        pos_numero = pos_dizaine_sec;
+  if((secondes+1)*1625==compteur_secondes){
+  //Changement_LEDS(pt_value1,pt_value2);
+   secondes++;
+   secondes_unite++;
+   if(secondes_unite >=10){
+     secondes_unite = 0;
+     secondes_dizaine++;
       }
-      if (secondes>=60)
-      {
-        compteur_secondes=0;
-        secondes_unite=0;
-        secondes_dizaine=0;
-        secondes=0;
-        minutes++;
-        minutes_unite++;
-        numero_afficher = minutes_unite;
-        pos_numero = pos_unite_min;
-        if(minutes_unite >=10)
-        {
+   if(secondes>=60){
+      compteur_secondes=0;
+      secondes_unite=0;
+      secondes_dizaine=0;
+      secondes=0;
+      minutes++;
+      minutes_unite++;
+      if(minutes_unite >=10){
           minutes_unite = 0;
           minutes_dizaine++;
-          numero_afficher = minutes_dizaine;
-          pos_numero = pos_dizaine_min;
         }
-        if(minutes>=60)
-        {
+      if(minutes>=60){
           minutes=0;
           minutes_unite=0;
           minutes_dizaine=0;
           heures++;
           heures_unite++;
-          numero_afficher = heures_unite;
-          pos_numero = pos_unite_heure;
-        if(heures_unite >=10)
-        {
+          if(heures_unite >=10){
           heures_unite = 0;
           heures_dizaine++;
-          numero_afficher = heures_dizaine;
-          pos_numero = pos_dizaine_heure;
         }
-
-          if(heures>=24)
-          {
+          if(heures>=24){
             heures=0;
             heures_unite=0;
-            heures_dizaine=0;
-            numero_afficher = heures_unite;
-            pos_numero = pos_unite_heure;
+            heures_dizaine=0;}
+          if(heures>=12){
+           heures_aiguille=heures-12;
           }
+          else{
+            heures_aiguille=heures;}
         }
-
       }
+    }
 
+  if (aiguille){
+  if (secondes >=30)
+  {
+    temp_secondes = secondes + 30 - 60;
+  }
+  else
+  {
+    temp_secondes = secondes + 30;
+  }
+
+  if (minutes >=30)
+  {
+    temp_minutes = minutes + 30 - 60;
+  }
+  else
+  {
+    temp_minutes = minutes + 30;
+  }
+
+  if (heures_aiguille >=6)
+  {
+    temp_heures = heures_aiguille + 6 - 12;
+  }
+  else
+  {
+    temp_heures = heures_aiguille + 6;
+  }
+
+  if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
+  {
+        Control_LEDS(0,252);
+      }
+  else
+  {
+      if(pas*temp_minutes<=temps && pas*temp_minutes+6>=temps){
+            Control_LEDS(0,252);
+          }
+          else{
+              if(pas*5*temp_heures<=temps && pas*5*temp_heures+6>=temps){
+                Control_LEDS(0,7);
+                }
+              else{
+                Control_LEDS(0,0);
+                  }
+                }
+    }
 }
+
+  if(!aiguille){
+    update_chiffre(pos_unite_sec, secondes_unite, matrice);
+    update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
+
+    update_chiffre(pos_unite_min, minutes_unite, matrice);
+    update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
+
+    update_chiffre(pos_unite_heure, heures_unite, matrice);
+    update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);
+
   if(pas*chemin <= temps  && pas*chemin+1 >=temps)
   {
-  pt_matrice_parcours++;
-  chemin++;
-  if (chemin==60)
-  {chemin=0;
-  pt_matrice_parcours = matrice;}
-
+    pt_matrice_parcours++;
+    chemin++;
+    if (chemin==60)
+    {chemin=0;
+    pt_matrice_parcours = matrice;}
+  }
+  value1 = *pt_matrice_parcours;
+  value2 = *pt_matrice_parcours>>8;
+  Control_LEDS(value2, value1);
 }
-value1 = *pt_matrice_parcours;
-value2 = *pt_matrice_parcours>>8;
-Control_LEDS(value2, value1);
-}
-
 }
 
 }
