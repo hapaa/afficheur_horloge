@@ -368,13 +368,29 @@ uint8_t* pt_value2 = &value2;
 Changement_LEDS(pt_value1,pt_value2);*/
 
 //---------------INITIALISATION VARIABLES V2-------------//
-uint16_t  matrice[60] = {0, 0, 0, 0, 0, 320, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
-                         4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 320, 0, 0, 0, 0};
+uint16_t  matrice[60] = {0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0,
 
+                         0, 0, 0, 4, 6,
+                         6, 14, 14, 28, 3132,
+                         3192, 4080, 8128, 7168, 0,
+
+                         0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0,
+
+                         0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0};
+
+                        /* uint16_t  matrice[60] = {0, 0, 0, 0, 0, 320, 0, 0, 0, 0,
+                                                  0, 0, 0, 0, 0,
+                                                   0, 0, 0, 0, 0,
+                                                  0, 0, 4064, 256, 4064, 0, 896, 1344, 832, 0,
+                                                  4064, 0, 4064, 0, 896, 1088, 896, 0, 0, 0,
+                                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                  0, 0, 0, 0, 0, 320, 0, 0, 0, 0};*/
 
 
 /*uint16_t un[3] = {0, 0, 992};
@@ -410,12 +426,12 @@ pt_matrice_parcours = matrice;
 uint16_t minutes = 59;
 uint16_t heures = 14;*/
 
-update_chiffre(pos_unite_sec, secondes_unite, matrice);
+/*update_chiffre(pos_unite_sec, secondes_unite, matrice);
 update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
 update_chiffre(pos_unite_min, minutes_unite, matrice);
 update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
 update_chiffre(pos_unite_heure, heures_unite, matrice);
-update_chiffre(pos_dizaine_heure,heures_dizaine, matrice);
+update_chiffre(pos_dizaine_heure,heures_dizaine, matrice);*/
 
 //update_chiffre(pos_points_droit, 0, points, matrice);
 //update_chiffre(pos_points_gauche, 0,  points, matrice);
@@ -693,14 +709,14 @@ if(pas*temp_secondes<=temps && pas*temp_secondes+6>=temps)
 }
 
   if(!aiguille){
-    update_chiffre(pos_unite_sec, secondes_unite, matrice);
+  /*  update_chiffre(pos_unite_sec, secondes_unite, matrice);
     update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice);
 
     update_chiffre(pos_unite_min, minutes_unite, matrice);
     update_chiffre(pos_dizaine_min, minutes_dizaine, matrice);
 
     update_chiffre(pos_unite_heure, heures_unite, matrice);
-    update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);
+    update_chiffre(pos_dizaine_heure, heures_dizaine, matrice);*/
 
   if(pas*chemin <= temps  && pas*chemin+1 >=temps)
   {
