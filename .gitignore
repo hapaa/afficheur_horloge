@@ -2,8 +2,6 @@
 *.hex
 *~
 se-horloge
-oldrotate_character_v3.ipynb
-rotate_character_v3.ipynb
-rotate_character_v3.ipynb
 old
 .ipynb_checkpoints/
+.vscode/
