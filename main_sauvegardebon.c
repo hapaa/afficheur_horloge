@@ -383,7 +383,7 @@ int main(void)
   update_chiffre(pos_dizaine_heure,heures_dizaine, matrice_V2);
 
   //---------------INITIALISATION VARIABLES V3-------------//
-  uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
+/*  uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0,
 
@@ -397,11 +397,11 @@ int main(void)
 
                            0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0};
+                           0, 0, 0, 0, 0};*/
 
-  /*                         0, 0, 0, 56, 60,
+  /*                      0, 0, 0, 56, 60,
                            120, 248, 7408, 7664, 8160,
-                           8064, 7680, 0, 0, 0,
+                           8064, 7680, 0, 0, 0,*/
 
     uint16_t matrice_V3[60] = {0, 0, 0, 0, 0,
                             0, 0, 0, 0, 0,
@@ -417,7 +417,7 @@ int main(void)
 
                             0, 0, 0, 0, 0,
                             0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0};*/
+                            0, 0, 0, 0, 0};
 
   // Initialisation variables compteurs debug
   uint16_t tfinwhile = 0;
