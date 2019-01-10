@@ -383,89 +383,6 @@ int main(void)
   uint8_t value2 = 0;
 
 //---------------INITIALISATION VARIABLES V2-------------//
-uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0,
-
-                         0, 0, 0, 0, 0,
-                         0, 0, 28123, 0, 0,
-                         0, 0, 0, 0, 0,
-
-                         0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0,
-
-                         0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0};
-
-/*                         0, 0, 0, 56, 60,
-                         120, 248, 7408, 7664, 8160,
-                         8064, 7680, 0, 0, 0,
-  uint16_t matrice[60] = {0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-
-                          16,
-                          32,
-                          0,
-                          64,
-                          128,
-                          128,
-                          0,
-                          128,
-                          0,
-                          128,
-                          128,
-                          64,
-                          0,
-                          32,
-                          16,
-
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0};*/
-
 uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
                             320, 0, 0, 0, 0,
                             0, 0, 0, 0, 0,
@@ -490,6 +407,43 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
   update_chiffre(pos_dizaine_min, minutes_dizaine, matrice_V2);
   update_chiffre(pos_unite_heure, heures_unite, matrice_V2);
   update_chiffre(pos_dizaine_heure,heures_dizaine, matrice_V2);
+
+  //---------------INITIALISATION VARIABLES V3-------------//
+  uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0,
+
+                           0, 0, 0, 0, 0,
+                           0, 0, 28123, 0, 0,
+                           0, 0, 0, 0, 0,
+
+                           0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0,
+
+                           0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0};
+
+  /*                         0, 0, 0, 56, 60,
+                           120, 248, 7408, 7664, 8160,
+                           8064, 7680, 0, 0, 0,
+
+    uint16_t matrice_V3[60] = {0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0,
+
+                            16, 32, 0, 64, 128,
+                            128, 0, 128, 0, 128,
+                            128, 64, 0, 32, 16,
+
+                            0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0,
+
+                            0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0};*/
 
   // Initialisation variables compteurs debug
   uint16_t tfinwhile = 0;
@@ -550,6 +504,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
       secondes = 0;
       secondes_unite = 0;
       secondes_dizaine = 0;
+      pt_matrice_parcours = matrice_V2;
       changement_mode = 'e';
     }
 
@@ -562,6 +517,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
       secondes = 0;
       secondes_unite = 0;
       secondes_dizaine = 0;
+      pt_matrice_parcours = matrice_V3;
       changement_mode = 'e';
     }
 
