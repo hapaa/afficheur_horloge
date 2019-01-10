@@ -24,7 +24,6 @@ uint16_t valeur_V3 = 1000;
 unsigned char changement_mode;
 uint16_t mode = 0;
 
-
 // Initialisation des positions des éléments pour la V2
 static const uint16_t pos_unite_sec = 47;
 static const uint16_t pos_dizaine_sec = 51;
@@ -33,9 +32,8 @@ static const uint16_t pos_dizaine_min = 1;
 static const uint16_t pos_unite_heure = 7;
 static const uint16_t pos_dizaine_heure = 11;
 
-
 void USART_Init(unsigned int ubrr)
-{/* Initialisation de l'USART */
+{ /* Initialisation de l'USART */
   // Initisialisation de la Baudrate à la valeur ubrr
   UBRR0H = (unsigned char)(ubrr >> 8);
   UBRR0L = (unsigned char)ubrr;
@@ -48,13 +46,14 @@ void USART_Init(unsigned int ubrr)
 void USART_Transmit(unsigned char data)
 { /* Transmission de l'USART */
   // Attend que le buffer transmit soit vide
-    while (!(UCSR0A & (1 << UDRE0)));
+  while (!(UCSR0A & (1 << UDRE0)))
+    ;
   // Met la données dans un buffer et l'envoi
   UDR0 = data;
 }
 
 unsigned char USART_Receive(void)
-{/* Réception de l'USART */
+{ /* Réception de l'USART */
   //Retourne les données reçues
   return UDR0;
 }
@@ -90,11 +89,12 @@ void SPI_MasterTransmit(char cData)
 { /* Début de la tranmission SPI*/
   SPDR = cData;
   // Attend que la transmission soit complète
-  while (!(SPSR & (1 << SPIF)));
+  while (!(SPSR & (1 << SPIF)))
+    ;
 }
 
 void Control_LEDS(uint8_t value1, uint8_t value2)
-{/* Permet d'allumer les LEDS voulues */
+{ /* Permet d'allumer les LEDS voulues */
 
   PORTE |= (1 << PORTE4);
 
@@ -123,30 +123,30 @@ void Changement_LEDS(uint8_t *value1, uint8_t *value2)
 }
 
 ISR(INT0_vect)
-{/* Interuption due à l'effet hall*/
+{ /* Interuption due à l'effet hall*/
   detection_hall++;
 }
 
 ISR(USART0_RX_vect)
-{/* Interuption due à la réception d'un élément usart*/
+{ /* Interuption due à la réception d'un élément usart*/
   compteur_usart++;
   changement_mode = UDR0;
 }
 
 ISR(TIMER0_COMP_vect)
-{/* Interuption due à l'overflow sur le timer 0
+{ /* Interuption due à l'overflow sur le timer 0
  Permet de compter les secondes */
   compteur_secondes++;
 }
 
 ISR(TIMER1_COMPA_vect)
-{/* Interuption due à l'overflow sur le timer 1
+{ /* Interuption due à l'overflow sur le timer 1
   Permet de compter précisemment le temps passé en unités arbitraires*/
   temps++;
 }
 
 ISR(TIMER3_COMPA_vect)
-{/* Interuption due à l'overflow sur le timer 3
+{ /* Interuption due à l'overflow sur le timer 3
   Permet de compter précisemment le temps passé en unités arbitraires
   Sert pour le debug et mesurer le temps d'execution d'une fonction */
   compteur_debug++;
@@ -168,7 +168,7 @@ void set_interrupt(void)
 }
 
 void init_secondes(void)
-{/* Initialisation du compteur de secondes en 8bits*/
+{ /* Initialisation du compteur de secondes en 8bits*/
 
   // Mode de comparaison avec une valeur mise dans un registre
   TIMSK |= (1 << OCIE0);
@@ -182,7 +182,7 @@ void init_secondes(void)
 }
 
 void init_temps(void)
-{/* Initialisation du compteur de temps en 16bits*/
+{ /* Initialisation du compteur de temps en 16bits*/
 
   // Mode de comparaison avec une valeur mise dans un registre A
   TIMSK |= (1 << OCIE1A);
@@ -218,7 +218,7 @@ void init_temps(void)
 }
 
 void init_temps_changement_mode(uint16_t valeur)
-{/* Change l'overflow du compteur temps */
+{ /* Change l'overflow du compteur temps */
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur >> 8;
@@ -228,7 +228,7 @@ void init_temps_changement_mode(uint16_t valeur)
 }
 
 void init_debug(void)
-{/* Initialisation du compteur de debug en 16bits*/
+{ /* Initialisation du compteur de debug en 16bits*/
 
   // Mode de comparaison avec une valeur mise dans un registre A
   ETIMSK |= (1 << OCIE3A);
@@ -323,7 +323,6 @@ int main(void)
 
   uint16_t pas = 3;
 
-
   // Initialisation du temps souhaité
   uint16_t secondes = 0;
   uint16_t minutes = 59;
@@ -334,7 +333,6 @@ int main(void)
   uint16_t temp_minutes = 0;
   uint16_t temp_heures = 0;
 
-
   uint16_t heures_dizaine = 1;
   uint16_t heures_unite = 5;
   uint16_t minutes_dizaine = 5;
@@ -344,7 +342,7 @@ int main(void)
 
   uint16_t chemin = 0;
   // Verification de la validité des temps
-  while(secondes >= 60)
+  while (secondes >= 60)
   {
     secondes -= 60;
     minutes++;
@@ -371,7 +369,7 @@ int main(void)
     heures_aiguille = heures_aiguille - 12;
   }
 
-// Initialisation des communications et interuptions
+  // Initialisation des communications et interuptions
   SPI_MasterInit();
   set_interrupt();
   init_secondes();
@@ -382,19 +380,19 @@ int main(void)
   uint8_t value1 = 0;
   uint8_t value2 = 0;
 
-//---------------INITIALISATION VARIABLES V2-------------//
-uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
-                            320, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 4064, 256, 4064,
-                            0, 896, 1344, 832, 0,
-                            4064, 0, 4064, 0, 896,
-                            1088, 896, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            320, 0, 0, 0, 0};
+  //---------------INITIALISATION VARIABLES V2-------------//
+  uint16_t matrice_V2[60] = {0, 0, 0, 0, 0,
+                             320, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 4064, 256, 4064,
+                             0, 896, 1344, 832, 0,
+                             4064, 0, 4064, 0, 896,
+                             1088, 896, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             320, 0, 0, 0, 0};
 
   // Creation d'un pointeur pour parcourir la matrice
   uint16_t *pt_matrice_parcours;
@@ -406,24 +404,24 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
   update_chiffre(pos_unite_min, minutes_unite, matrice_V2);
   update_chiffre(pos_dizaine_min, minutes_dizaine, matrice_V2);
   update_chiffre(pos_unite_heure, heures_unite, matrice_V2);
-  update_chiffre(pos_dizaine_heure,heures_dizaine, matrice_V2);
+  update_chiffre(pos_dizaine_heure, heures_dizaine, matrice_V2);
 
   //---------------INITIALISATION VARIABLES V3-------------//
-  uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0,
+  uint16_t matrice_V3[60] = {0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
 
-                           0, 0, 0, 0, 0,
-                           0, 0, 28123, 0, 0,
-                           0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 28123, 0, 0,
+                             0, 0, 0, 0, 0,
 
-                           0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
 
-                           0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0};
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0,
+                             0, 0, 0, 0, 0};
 
   /*                         0, 0, 0, 56, 60,
                            120, 248, 7408, 7664, 8160,
@@ -455,7 +453,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
   { /* Début de la boucle infinie */
 
     if (compteur_while++ >= 10000)
-    {/* Compteur permettant de savoir le temps pour effectuer la boucle for */
+    { /* Compteur permettant de savoir le temps pour effectuer la boucle for */
       tfinwhile = compteur_debug;
       twhile = tfinwhile - tdebutwhile;
       tdebutwhile = compteur_debug;
@@ -480,7 +478,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     }
 
     if (changement_mode == 'a')
-    {/* Permet de passer au mode V1 */
+    { /* Permet de passer au mode V1 */
       mode = 1;
       temps = 0;
       init_temps_changement_mode(valeur_V1);
@@ -496,7 +494,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     }
 
     if (changement_mode == 'b')
-    {/* Permet de passer au mode V2 */
+    { /* Permet de passer au mode V2 */
       mode = 2;
       temps = 0;
       init_temps_changement_mode(valeur_V2);
@@ -509,7 +507,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     }
 
     if (changement_mode == 'c')
-    {/* Permet de passer au mode V3 */
+    { /* Permet de passer au mode V3 */
       mode = 3;
       temps = 0;
       init_temps_changement_mode(valeur_V3);
@@ -631,14 +629,14 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     // V2 : Appel fonction chiffres tordus
     if (mode == 2)
     {
-    update_chiffre(pos_unite_sec, secondes_unite, matrice_V2);
-    update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice_V2);
+      update_chiffre(pos_unite_sec, secondes_unite, matrice_V2);
+      update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice_V2);
 
-    update_chiffre(pos_unite_min, minutes_unite, matrice_V2);
-    update_chiffre(pos_dizaine_min, minutes_dizaine, matrice_V2);
+      update_chiffre(pos_unite_min, minutes_unite, matrice_V2);
+      update_chiffre(pos_dizaine_min, minutes_dizaine, matrice_V2);
 
-    update_chiffre(pos_unite_heure, heures_unite, matrice_V2);
-    update_chiffre(pos_dizaine_heure, heures_dizaine, matrice_V2);
+      update_chiffre(pos_unite_heure, heures_unite, matrice_V2);
+      update_chiffre(pos_dizaine_heure, heures_dizaine, matrice_V2);
 
       if (pas * chemin <= temps && pas * chemin + 1 >= temps)
       {
