@@ -18,10 +18,11 @@ uint16_t compteur_debug;
 // Initialisation valeur overflow compteur suivant mode
 uint16_t valeur_V1 = 200;
 uint16_t valeur_V2 = 1000;
+uint16_t valeur_V3 = 1000;
 
 // Initialisation caractere de changement de mode et booléen
 unsigned char changement_mode;
-uint16_t aiguille = 0;
+uint16_t mode = 0;
 
 
 // Initialisation des positions des éléments pour la V2
@@ -193,13 +194,20 @@ void init_temps(void)
 
   // Valeur à comparer au timer
   uint16_t valeur = 200;
-  if (aiguille)
+  if (mode == 0)
   {
     valeur = 200; // Pour V1
   }
   else
   {
-    valeur = 1000; // Pour V2
+    if (mode == 1)
+    {
+      valeur = 1000; // Pour V2
+    }
+    else
+    {
+      valeur = 1000; // Pour V3
+    }
   }
 
   uint8_t valeur_low = valeur;
@@ -375,7 +383,7 @@ int main(void)
   uint8_t value2 = 0;
 
 //---------------INITIALISATION VARIABLES V2-------------//
-uint16_t  matrice[60] = {0, 0, 0, 0, 0,
+uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
                          0, 0, 0, 0, 0,
                          0, 0, 0, 0, 0,
 
@@ -507,7 +515,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
       temps = 0;
     }
 
-    if (changement_mode == 'c')
+    if (changement_mode == 'd')
     { /* Permet de demander le résultat du compteur debug */
       char string[64];
       itoa(twhile, string, 10); //convert integer to string, radix=1
@@ -519,7 +527,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
 
     if (changement_mode == 'a')
     {/* Permet de passer au mode V1 */
-      aiguille = 1;
+      mode = 1;
       temps = 0;
       init_temps_changement_mode(valeur_V1);
       compteur_secondes = 0;
@@ -535,9 +543,21 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
 
     if (changement_mode == 'b')
     {/* Permet de passer au mode V2 */
-      aiguille = 0;
+      mode = 2;
       temps = 0;
       init_temps_changement_mode(valeur_V2);
+      compteur_secondes = 0;
+      secondes = 0;
+      secondes_unite = 0;
+      secondes_dizaine = 0;
+      changement_mode = 'e';
+    }
+
+    if (changement_mode == 'c')
+    {/* Permet de passer au mode V3 */
+      mode = 3;
+      temps = 0;
+      init_temps_changement_mode(valeur_V3);
       compteur_secondes = 0;
       secondes = 0;
       secondes_unite = 0;
@@ -599,7 +619,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     }
 
     // V1 : Appel fonction aiguille
-    if (aiguille)
+    if (mode == 1)
     {
       if (secondes >= 30)
       {
@@ -652,8 +672,8 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
       }
     }
 
-    // V2 : matrice et chiffres
-    if (!aiguille)
+    // V2 : Appel fonction chiffres tordus
+    if (mode == 2)
     {
     update_chiffre(pos_unite_sec, secondes_unite, matrice_V2);
     update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice-V2);
@@ -672,6 +692,25 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
         {
           chemin = 0;
           pt_matrice_parcours = matrice_V2;
+        }
+      }
+      value1 = *pt_matrice_parcours;
+      value2 = *pt_matrice_parcours >> 8;
+      Control_LEDS(value2, value1);
+    }
+
+    // V3 : Appel fonction chiffres droits
+    if (mode == 3)
+    {
+      // Mettre à jour les différents cadrants
+      if (pas * chemin <= temps && pas * chemin + 1 >= temps)
+      {
+        pt_matrice_parcours++;
+        chemin++;
+        if (chemin == 60)
+        {
+          chemin = 0;
+          pt_matrice_parcours = matrice_V3;
         }
       }
       value1 = *pt_matrice_parcours;
