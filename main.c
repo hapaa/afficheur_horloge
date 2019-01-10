@@ -632,7 +632,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     if (mode == 2)
     {
     update_chiffre(pos_unite_sec, secondes_unite, matrice_V2);
-    update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice-V2);
+    update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice_V2);
 
     update_chiffre(pos_unite_min, minutes_unite, matrice_V2);
     update_chiffre(pos_dizaine_min, minutes_dizaine, matrice_V2);
