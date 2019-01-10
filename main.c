@@ -2105,7 +2105,6 @@ int main(void)
   uint16_t temp_secondes = 0;
   uint16_t temp_minutes = 0;
   uint16_t temp_heures = 0;
-  uint16_t temp_chemin = 0;
 
   uint16_t heures_dizaine = 1;
   uint16_t heures_unite = 5;
@@ -2118,41 +2117,6 @@ int main(void)
   // Verification de la validité des temps
   if (secondes >= 60)
   {
-<<<<<<< HEAD
-    uint16_t mode = 1;
-    // Initialisation des compteurs
-    compteur_usart = 0;
-    compteur_secondes = 0;
-    temps = 0;
-    changement_mode = 'e';
-
-    // Initialisation du temps souhaité
-    uint16_t secondes = 0;
-    uint16_t minutes = 59;
-    uint16_t heures = 15;
-    uint16_t heures_aiguille = 0;
-
-    uint16_t temp_secondes = 0;
-    uint16_t temp_minutes = 0;
-    uint16_t temp_heures = 0;
-
-    uint16_t heures_dizaine = 1;
-    uint16_t heures_unite = 5;
-    uint16_t minutes_dizaine = 5;
-    uint16_t minutes_unite = 9;
-    uint16_t secondes_dizaine = 0;
-    uint16_t secondes_unite = 0;
-
-    uint16_t chemin = 0;
-    // Verification de la validité des temps
-    if (secondes >= 60)
-    {
-      secondes -= 60;
-    }
-    if (minutes >= 60)
-    {
-      minutes -= 60;
-=======
     secondes -= 60;
   }
   if (minutes >= 60)
@@ -2250,19 +2214,26 @@ int main(void)
       twhile = tfinwhile - tdebutwhile;
       tdebutwhile = compteur_debug;
       compteur_while = 0;
->>>>>>> 2d95026afd678966f6073cf4efb88d9f558c9919
     }
 
     if (detection_hall >= 1)
     { /*Detection de l'effet hall et calcul du temps du tour et du pas /60 */
       detection_hall = 0;
-      if (mode <= 2)
+      if (mode == 1)
       {
         pas = temps / 60;
       }
-      else
+      if (mode == 2)
+      {
+        pas = temps / 60;
+        chemin = 0;
+        pt_matrice_parcours = matrice_V2;
+      }
+      if (mode == 3)
       {
         pas = temps / 120;
+        chemin = 0;
+        pt_matrice_parcours = matrice_V3;
       }
       temps = 0;
     }
@@ -2276,107 +2247,6 @@ int main(void)
       uart_send(string);
       changement_mode = 'e';
     }
-<<<<<<< HEAD
-    else
-    {
-      heures_aiguille = heures;
-    } // POUR AIGUILLE
-
-    // Initialisation des communications et interuptions
-    SPI_MasterInit();
-    uint16_t pas = 3;
-    set_interrupt();
-    init_secondes();
-    init_temps();
-    init_debug();
-    USART_Init(MYUBRR);
-
-    uint8_t value1 = 0;
-    uint8_t value2 = 0;
-
-    //---------------INITIALISATION VARIABLES V2-------------//
-    uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
-                               320, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0,
-                               0, 0, 4064, 256, 4064,
-                               0, 896, 1344, 832, 0,
-                               4064, 0, 4064, 0, 896,
-                               1088, 896, 0, 0, 0,
-                               0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0,
-                               320, 0, 0, 0, 0};
-
-    // Creation d'un pointeur pour parcourir la matrice
-    uint16_t *pt_matrice_parcours;
-    pt_matrice_parcours = matrice_V2;
-
-    //---------------INITIALISATION VARIABLES V3-------------//
-
-      uint16_t matrice_V3[120] = {0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 128, 96, 16,
-                                0, 8, 32, 20, 0,
-                                32, 0, 96, 0, 160,
-                                0, 128, 64, 1408, 512,
-                                1280, 256, 512, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0};
-
-    // Initialisation variables compteurs debug
-    uint16_t tfinwhile = 0;
-    uint16_t twhile = 0;
-    uint16_t compteur_while = 0;
-    uint16_t tdebutwhile = compteur_debug;
-    for (;;)
-    { /* Début de la boucle infinie */
-      if (compteur_while++ >= 10000)
-      {/* Compteur permettant de savoir le temps pour effectuer la boucle for */
-        tfinwhile = compteur_debug;
-        twhile = tfinwhile - tdebutwhile;
-        tdebutwhile = compteur_debug;
-        compteur_while = 0;
-      }
-
-      if (detection_hall >= 1)
-      { /*Detection de l'effet hall et calcul du temps du tour et du pas /60 */
-        detection_hall = 0;
-        if (mode == 1)
-        {
-          pas = temps / 60;
-        }
-        if (mode == 2)
-        {
-          pas = temps / 60;
-          pt_matrice_parcours = matrice_V2;
-
-        }
-        if (mode == 3)
-        {
-          pas = temps / 120;
-          pt_matrice_parcours = matrice_V3;
-
-        }
-        temps = 0;
-        chemin = 0;
-
-=======
 
     if (changement_mode == 'a')
     { /* Permet de passer au mode V1 */
@@ -2390,7 +2260,6 @@ int main(void)
       if (heures > 12)
       {
         heures_aiguille = heures - 12;
->>>>>>> 2d95026afd678966f6073cf4efb88d9f558c9919
       }
       changement_mode = 'e';
     }
@@ -2558,14 +2427,6 @@ int main(void)
     // V3 : Appel fonction chiffres droits
     if (mode == 3)
     {
-      // Mettre à jour les différents cadrants
-      update_cadrant_HG(secondes_unite, matrice_V3);
-      update_cadrant_HD(secondes_unite, matrice_V3);
-      update_cadrant_BG(secondes_unite, matrice_V3);
-      update_cadrant_BD(secondes_unite, matrice_V3);
-      if (pas * chemin <= temps && pas * chemin + 1 >= temps)
-      {
-<<<<<<< HEAD
         // Mettre à jour les différents cadrants
         update_cadrant_HG(heures_dizaine, matrice_V3);
         update_cadrant_HD(heures_unite, matrice_V3);
@@ -2602,39 +2463,6 @@ int main(void)
           }
         }
         Control_LEDS(value2, value1);
-=======
-        pt_matrice_parcours++;
-        chemin++;
-        if (chemin == 120)
-        {
-          chemin = 0;
-          pt_matrice_parcours = matrice_V3;
-        }
->>>>>>> 2d95026afd678966f6073cf4efb88d9f558c9919
-      }
-      value1 = *pt_matrice_parcours;
-      value2 = *pt_matrice_parcours >> 8;
-      if (secondes >= 30)
-      {
-        temp_secondes = secondes + 30 - 60;
-      }
-      else
-      {
-        temp_secondes = secondes + 30;
-      }
-      if (chemin >= 60)
-      {
-        temp_chemin = chemin + 60 - 120;
-      }
-      else
-      {
-        temp_chemin = chemin + 60;
-      }
-      if (temp_secondes * 2 >= temp_chemin)
-      {
-        value2 |= 128;
-      }
-      Control_LEDS(value2, value1);
     }
   }
 }
