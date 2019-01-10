@@ -6,33 +6,24 @@
 #include <string.h>
 
 #define BAUD 38400
-#define MYUBRR F_CPU / 16 / BAUD - 1
-
-// Initialisation compteurs pour les interuptions
+#define MYUBRR F_CPU/16/BAUD-1
 uint16_t detection_hall;
 uint16_t compteur_usart;
 uint16_t compteur_secondes;
 uint16_t temps;
 uint16_t compteur_debug;
-
-// Initialisation valeur overflow compteur suivant mode
-uint16_t valeur_V1 = 200;
-uint16_t valeur_V2 = 1000;
-uint16_t valeur_V3 = 1000;
-
-// Initialisation caractere de changement de mode et booléen
 unsigned char changement_mode;
-uint16_t mode = 0;
 
-
-// Initialisation des positions des éléments pour la V2
 static const uint16_t pos_unite_sec = 47;
 static const uint16_t pos_dizaine_sec = 51;
 static const uint16_t pos_unite_min = 57;
 static const uint16_t pos_dizaine_min = 1;
 static const uint16_t pos_unite_heure = 7;
 static const uint16_t pos_dizaine_heure = 11;
+uint16_t aiguille = 0;
 
+//DDRE |= (1<<DDE2); METTRE PE2 EN OUTPUT, SUPPOSEMENT EQUIVALENT A METTRE XCKO SUR PE2
+//PORTE &= ~(1<<PORTE2); FORCER INPUT XCK0 A 0, SUPPOSEMENT EMPECHER MODE CONFIG
 
 void USART_Init(unsigned int ubrr)
 {/* Initialisation de l'USART */
@@ -45,6 +36,7 @@ void USART_Init(unsigned int ubrr)
   UCSR0C = (1 << USBS0) | (1 << UCSZ00) | (1 << UCSZ01);
 }
 
+
 void USART_Transmit(unsigned char data)
 { /* Transmission de l'USART */
   // Attend que le buffer transmit soit vide
@@ -52,6 +44,7 @@ void USART_Transmit(unsigned char data)
   // Met la données dans un buffer et l'envoi
   UDR0 = data;
 }
+
 
 unsigned char USART_Receive(void)
 {/* Réception de l'USART */
@@ -86,12 +79,14 @@ void SPI_MasterInit(void)
   SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0);
 }
 
+
 void SPI_MasterTransmit(char cData)
 { /* Début de la tranmission SPI*/
   SPDR = cData;
   // Attend que la transmission soit complète
   while (!(SPSR & (1 << SPIF)));
 }
+
 
 void Control_LEDS(uint8_t value1, uint8_t value2)
 {/* Permet d'allumer les LEDS voulues */
@@ -194,21 +189,6 @@ void init_temps(void)
 
   // Valeur à comparer au timer
   uint16_t valeur = 200;
-  if (mode == 0)
-  {
-    valeur = 200; // Pour V1
-  }
-  else
-  {
-    if (mode == 1)
-    {
-      valeur = 1000; // Pour V2
-    }
-    else
-    {
-      valeur = 1000; // Pour V3
-    }
-  }
 
   uint8_t valeur_low = valeur;
   uint8_t valeur_high = valeur >> 8;
@@ -316,13 +296,12 @@ void update_chiffre(uint16_t position_debut, uint16_t pos, uint16_t matrice[])
 
 int main(void)
 {
+  uint16_t mode = 1;
   // Initialisation des compteurs
   compteur_usart = 0;
   compteur_secondes = 0;
   temps = 0;
-
-  uint16_t pas = 3;
-
+  changement_mode = 'e';
 
   // Initialisation du temps souhaité
   uint16_t secondes = 0;
@@ -344,17 +323,15 @@ int main(void)
 
   uint16_t chemin = 0;
   // Verification de la validité des temps
-  while(secondes >= 60)
+  if (secondes >= 60)
   {
     secondes -= 60;
-    minutes++;
   }
-  while (minutes >= 60)
+  if (minutes >= 60)
   {
     minutes -= 60;
-    heures++;
   }
-  while (heures >= 24)
+  if (heures >= 24)
   {
     heures -= 24;
   }
@@ -365,14 +342,11 @@ int main(void)
   else
   {
     heures_aiguille = heures;
-  }
-  while (heures_aiguille >= 12)
-  {
-    heures_aiguille = heures_aiguille - 12;
-  }
+  } // POUR AIGUILLE
 
-// Initialisation des communications et interuptions
+  // Initialisation des communications et interuptions
   SPI_MasterInit();
+  uint16_t pas = 3;
   set_interrupt();
   init_secondes();
   init_temps();
@@ -382,8 +356,8 @@ int main(void)
   uint8_t value1 = 0;
   uint8_t value2 = 0;
 
-//---------------INITIALISATION VARIABLES V2-------------//
-uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
+  //---------------INITIALISATION VARIABLES V2-------------//
+  uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
                             320, 0, 0, 0, 0,
                             0, 0, 0, 0, 0,
                             0, 0, 0, 0, 0,
@@ -450,10 +424,8 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
   uint16_t twhile = 0;
   uint16_t compteur_while = 0;
   uint16_t tdebutwhile = compteur_debug;
-
   for (;;)
   { /* Début de la boucle infinie */
-
     if (compteur_while++ >= 10000)
     {/* Compteur permettant de savoir le temps pour effectuer la boucle for */
       tfinwhile = compteur_debug;
@@ -483,7 +455,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     {/* Permet de passer au mode V1 */
       mode = 1;
       temps = 0;
-      init_temps_changement_mode(valeur_V1);
+      init_temps_changement_mode(200);
       compteur_secondes = 0;
       secondes = 0;
       secondes_unite = 0;
@@ -499,7 +471,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     {/* Permet de passer au mode V2 */
       mode = 2;
       temps = 0;
-      init_temps_changement_mode(valeur_V2);
+      init_temps_changement_mode(1000);
       compteur_secondes = 0;
       secondes = 0;
       secondes_unite = 0;
@@ -512,7 +484,7 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
     {/* Permet de passer au mode V3 */
       mode = 3;
       temps = 0;
-      init_temps_changement_mode(valeur_V3);
+      init_temps_changement_mode(10000);
       compteur_secondes = 0;
       secondes = 0;
       secondes_unite = 0;
@@ -674,4 +646,4 @@ uint16_t  matrice_V2[60] = {0, 0, 0, 0, 0,
       Control_LEDS(value2, value1);
     }
   }
-}
+  }
