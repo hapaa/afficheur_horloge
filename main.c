@@ -7,11 +7,11 @@
 
 #define BAUD 38400
 #define MYUBRR F_CPU/16/BAUD-1
-uint16_t detection_hall;
-uint16_t compteur_usart;
-uint16_t compteur_secondes;
-uint16_t temps;
-uint16_t compteur_debug;
+volatile uint16_t detection_hall;
+volatile uint16_t compteur_usart;
+volatile uint16_t compteur_secondes;
+volatile uint16_t temps;
+volatile uint16_t compteur_debug;
 unsigned char changement_mode;
 
 static const uint16_t pos_unite_sec = 47;
@@ -374,6 +374,8 @@ int main(void)
   uint16_t *pt_matrice_parcours;
   pt_matrice_parcours = matrice_V2;
 
+
+
   // Initialisation des valeurs dans la matrice pour la V2
   update_chiffre(pos_unite_sec, secondes_unite, matrice_V2);
   update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice_V2);
@@ -383,7 +385,7 @@ int main(void)
   update_chiffre(pos_dizaine_heure,heures_dizaine, matrice_V2);
 
   //---------------INITIALISATION VARIABLES V3-------------//
-  uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
+/*  uint16_t  matrice_V3[60] = {0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0,
 
@@ -397,27 +399,24 @@ int main(void)
 
                            0, 0, 0, 0, 0,
                            0, 0, 0, 0, 0,
-                           0, 0, 0, 0, 0};
+                           0, 0, 0, 0, 0};*/
 
-  /*                         0, 0, 0, 56, 60,
+  /*                      0, 0, 0, 56, 60,
                            120, 248, 7408, 7664, 8160,
-                           8064, 7680, 0, 0, 0,
+                           8064, 7680, 0, 0, 0,*/
 
     uint16_t matrice_V3[60] = {0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-
-                            16, 32, 0, 64, 128,
-                            128, 0, 128, 0, 128,
-                            128, 64, 0, 32, 16,
-
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0,
-                            0, 0, 0, 0, 0};*/
+                              0, 0, 0, 32384, 16128,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0};
 
   // Initialisation variables compteurs debug
   uint16_t tfinwhile = 0;
@@ -484,7 +483,7 @@ int main(void)
     {/* Permet de passer au mode V3 */
       mode = 3;
       temps = 0;
-      init_temps_changement_mode(10000);
+      init_temps_changement_mode(1000);
       compteur_secondes = 0;
       secondes = 0;
       secondes_unite = 0;
