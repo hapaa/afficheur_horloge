@@ -2038,31 +2038,18 @@ matrice[ 119 ] =  0 ;
     if (numero == 9)
     {
       matrice[ 90 ] =  0 ;
-
-matrice[ 91 ] =  1024 ;
-
-matrice[ 92 ] =  896 ;
-
-matrice[ 93 ] =  1120 ;
-
-matrice[ 94 ] =  784 ;
-
-matrice[ 95 ] =  1152 ;
-
-matrice[ 96 ] =  584 ;
-
-matrice[ 97 ] =  1568 ;
-
-matrice[ 98 ] =  2068 ;
-
-matrice[ 99 ] =  1024 ;
-
-matrice[ 100 ] =  2560 ;
-
-matrice[ 101 ] =  5384 ;
-
-matrice[ 102 ] =  7168 ;
-
+      matrice[ 91 ] =  1024 ;
+      matrice[ 92 ] =  896 ;
+      matrice[ 93 ] =  1120 ;
+      matrice[ 94 ] =  784 ;
+      matrice[ 95 ] =  1152 ;
+      matrice[ 96 ] =  584 ;
+      matrice[ 97 ] =  1568 ;
+      matrice[ 98 ] =  2068 ;
+      matrice[ 99 ] =  1024 ;
+      matrice[ 100 ] =  2560 ;
+      matrice[ 101 ] =  5384 ;
+      matrice[ 102 ] =  7168 ;
 matrice[ 103 ] =  13952 ;
 
 matrice[ 104 ] =  16516 ;
@@ -2116,7 +2103,6 @@ matrice[ 119 ] =  0 ;
     uint16_t temp_secondes = 0;
     uint16_t temp_minutes = 0;
     uint16_t temp_heures = 0;
-    uint16_t temp_chemin = 0;
 
     uint16_t heures_dizaine = 1;
     uint16_t heures_unite = 5;
@@ -2178,16 +2164,6 @@ matrice[ 119 ] =  0 ;
     uint16_t *pt_matrice_parcours;
     pt_matrice_parcours = matrice_V2;
 
-
-
-    // Initialisation des valeurs dans la matrice pour la V2
-    update_chiffre(pos_unite_sec, secondes_unite, matrice_V2);
-    update_chiffre(pos_dizaine_sec, secondes_dizaine, matrice_V2);
-    update_chiffre(pos_unite_min, minutes_unite, matrice_V2);
-    update_chiffre(pos_dizaine_min, minutes_dizaine, matrice_V2);
-    update_chiffre(pos_unite_heure, heures_unite, matrice_V2);
-    update_chiffre(pos_dizaine_heure,heures_dizaine, matrice_V2);
-
     //---------------INITIALISATION VARIABLES V3-------------//
 
       uint16_t matrice_V3[120] = {0, 0, 0, 0, 0,
@@ -2233,15 +2209,25 @@ matrice[ 119 ] =  0 ;
       if (detection_hall >= 1)
       { /*Detection de l'effet hall et calcul du temps du tour et du pas /60 */
         detection_hall = 0;
-        if (mode <= 2)
+        if (mode == 1)
         {
           pas = temps / 60;
         }
-        else
+        if (mode == 2)
+        {
+          pas = temps / 60;
+          pt_matrice_parcours = matrice_V2;
+
+        }
+        if (mode == 3)
         {
           pas = temps / 120;
+          pt_matrice_parcours = matrice_V3;
+
         }
         temps = 0;
+        chemin = 0;
+
       }
 
       if (changement_mode == 'd')
@@ -2434,10 +2420,10 @@ matrice[ 119 ] =  0 ;
       if (mode == 3)
       {
         // Mettre à jour les différents cadrants
-        update_cadrant_HG(secondes_unite, matrice_V3);
-        update_cadrant_HD(secondes_unite, matrice_V3);
-        update_cadrant_BG(secondes_unite, matrice_V3);
-        update_cadrant_BD(secondes_unite, matrice_V3);
+        update_cadrant_HG(heures_dizaine, matrice_V3);
+        update_cadrant_HD(heures_unite, matrice_V3);
+        update_cadrant_BG(minutes_dizaine, matrice_V3);
+        update_cadrant_BD(minutes_unite, matrice_V3);
         if (pas * chemin <= temps && pas * chemin + 1 >= temps)
         {
           pt_matrice_parcours++;
@@ -2450,25 +2436,23 @@ matrice[ 119 ] =  0 ;
         }
         value1 = *pt_matrice_parcours;
         value2 = *pt_matrice_parcours >> 8;
-        if (secondes >= 30)
+
+        if(chemin >=60)
         {
-          temp_secondes = secondes + 30 - 60;
+          if (secondes*2+60 >= chemin)
+          {
+            value2|=128;
+          }
         }
         else
         {
-          temp_secondes = secondes + 30;
-        }
-        if(chemin>=60)
-        {
-          temp_chemin = chemin+60-120;
-        }
-        else
-        {
-          temp_chemin = chemin + 60;
-        }
-        if(temp_secondes*2>=temp_chemin)
-        {
-          value2|=128;
+          if(secondes >= 30)
+          {
+            if((secondes-30)*2 >= chemin)
+            {
+              value2|=128;
+            }
+          }
         }
         Control_LEDS(value2, value1);
       }
