@@ -297,63 +297,39 @@ void update_cadrant_BG(uint16_t numero, uint16_t matrice[])
   if (numero == 0)
   {
     matrice[0] = 0;
-
     matrice[1] = 0;
-
     matrice[2] = 0;
-
     matrice[3] = 1024;
-
     matrice[4] = 768;
 
     matrice[5] = 1152;
-
     matrice[6] = 832;
-
     matrice[7] = 1696;
-
     matrice[8] = 2128;
-
     matrice[9] = 1024;
 
     matrice[10] = 2080;
-
     matrice[11] = 5128;
-
     matrice[12] = 6176;
-
     matrice[13] = 12288;
-
     matrice[14] = 2052;
 
     matrice[15] = 4112;
-
     matrice[16] = 5120;
-
     matrice[17] = 3072;
-
     matrice[18] = 1032;
-
     matrice[19] = 512;
 
     matrice[20] = 1024;
-
     matrice[21] = 276;
-
     matrice[22] = 544;
-
     matrice[23] = 840;
-
     matrice[24] = 128;
 
     matrice[25] = 784;
-
     matrice[26] = 96;
-
     matrice[27] = 896;
-
     matrice[28] = 0;
-
     matrice[29] = 0;
   }
   if (numero == 1)
@@ -397,250 +373,154 @@ void update_cadrant_BG(uint16_t numero, uint16_t matrice[])
   if (numero == 2)
   {
     matrice[0] = 0;
-
     matrice[1] = 0;
-
     matrice[2] = 0;
-
     matrice[3] = 1024;
-
     matrice[4] = 512;
 
     matrice[5] = 1024;
-
     matrice[6] = 576;
-
     matrice[7] = 1568;
-
     matrice[8] = 2128;
-
     matrice[9] = 1024;
 
     matrice[10] = 2080;
-
     matrice[11] = 5256;
-
     matrice[12] = 6240;
-
     matrice[13] = 12416;
-
     matrice[14] = 16548;
 
     matrice[15] = 4368;
-
     matrice[16] = 12928;
-
     matrice[17] = 7232;
-
     matrice[18] = 5512;
-
     matrice[19] = 2560;
 
     matrice[20] = 1280;
-
     matrice[21] = 2308;
-
     matrice[22] = 1536;
-
     matrice[23] = 8;
-
     matrice[24] = 0;
 
     matrice[25] = 16;
-
     matrice[26] = 96;
-
     matrice[27] = 896;
-
     matrice[28] = 1024;
-
     matrice[29] = 0;
   }
   if (numero == 3)
   {
     matrice[0] = 0;
-
     matrice[1] = 1024;
-
     matrice[2] = 896;
-
     matrice[3] = 1120;
-
     matrice[4] = 768;
 
     matrice[5] = 1152;
-
     matrice[6] = 840;
-
     matrice[7] = 1696;
-
     matrice[8] = 2116;
-
     matrice[9] = 1024;
 
     matrice[10] = 2080;
-
     matrice[11] = 5256;
-
     matrice[12] = 6208;
-
     matrice[13] = 12416;
-
     matrice[14] = 16518;
 
     matrice[15] = 4368;
-
     matrice[16] = 8832;
-
     matrice[17] = 1024;
-
     matrice[18] = 264;
-
     matrice[19] = 512;
 
     matrice[20] = 0;
-
     matrice[21] = 20;
-
     matrice[22] = 32;
-
     matrice[23] = 72;
-
     matrice[24] = 128;
 
     matrice[25] = 784;
-
     matrice[26] = 1120;
-
     matrice[27] = 896;
-
     matrice[28] = 1024;
-
     matrice[29] = 0;
   }
   if (numero == 4)
   {
     matrice[0] = 0;
-
     matrice[1] = 0;
-
     matrice[2] = 0;
-
     matrice[3] = 1024;
-
     matrice[4] = 768;
 
     matrice[5] = 1152;
-
     matrice[6] = 832;
-
     matrice[7] = 160;
-
     matrice[8] = 80;
-
     matrice[9] = 0;
 
     matrice[10] = 32;
-
     matrice[11] = 136;
-
     matrice[12] = 96;
-
     matrice[13] = 128;
-
     matrice[14] = 164;
 
     matrice[15] = 272;
-
     matrice[16] = 128;
-
     matrice[17] = 1088;
-
     matrice[18] = 1160;
-
     matrice[19] = 512;
 
     matrice[20] = 1024;
-
     matrice[21] = 260;
-
     matrice[22] = 512;
-
     matrice[23] = 776;
-
     matrice[24] = 0;
 
     matrice[25] = 768;
-
     matrice[26] = 0;
-
     matrice[27] = 768;
-
     matrice[28] = 0;
-
     matrice[29] = 0;
   }
 
   if (numero == 5)
   {
     matrice[0] = 1;
-
     matrice[1] = 1024;
-
     matrice[2] = 896;
-
     matrice[3] = 1120;
-
     matrice[4] = 784;
 
     matrice[5] = 1152;
-
     matrice[6] = 832;
-
     matrice[7] = 1696;
-
     matrice[8] = 2128;
-
     matrice[9] = 1024;
 
     matrice[10] = 2080;
-
     matrice[11] = 5248;
-
     matrice[12] = 6240;
-
     matrice[13] = 12416;
-
     matrice[14] = 16546;
 
     matrice[15] = 4352;
-
     matrice[16] = 8832;
-
     matrice[17] = 1088;
-
     matrice[18] = 1408;
-
     matrice[19] = 2560;
 
     matrice[20] = 1280;
-
     matrice[21] = 2308;
-
     matrice[22] = 1536;
-
     matrice[23] = 520;
-
     matrice[24] = 1024;
 
     matrice[25] = 528;
-
     matrice[26] = 1120;
-
     matrice[27] = 896;
-
     matrice[28] = 1024;
-
     matrice[29] = 0;
   }
 }
@@ -650,187 +530,115 @@ void update_cadrant_HG(uint16_t numero, uint16_t matrice[])
   if (numero == 0)
   {
     matrice[30] = 0;
-
     matrice[31] = 0;
-
     matrice[32] = 384;
-
     matrice[33] = 96;
-
     matrice[34] = 272;
 
     matrice[35] = 128;
-
     matrice[36] = 264;
-
     matrice[37] = 128;
-
     matrice[38] = 260;
-
     matrice[39] = 256;
 
     matrice[40] = 512;
-
     matrice[41] = 256;
-
     matrice[42] = 1024;
-
     matrice[43] = 1536;
-
     matrice[44] = 2054;
 
     matrice[45] = 512;
-
     matrice[46] = 5120;
-
     matrice[47] = 3072;
-
     matrice[48] = 1032;
-
     matrice[49] = 512;
 
     matrice[50] = 1024;
-
     matrice[51] = 276;
-
     matrice[52] = 544;
-
     matrice[53] = 840;
-
     matrice[54] = 128;
 
     matrice[55] = 784;
-
     matrice[56] = 96;
-
     matrice[57] = 896;
-
     matrice[58] = 0;
-
     matrice[59] = 0;
   }
   if (numero == 1)
   {
     matrice[30] = 0;
-
     matrice[31] = 0;
-
     matrice[32] = 128;
-
     matrice[33] = 96;
-
     matrice[34] = 16;
 
     matrice[35] = 0;
-
     matrice[36] = 8;
-
     matrice[37] = 32;
-
     matrice[38] = 20;
-
     matrice[39] = 0;
 
     matrice[40] = 32;
-
     matrice[41] = 0;
-
     matrice[42] = 96;
-
     matrice[43] = 0;
-
     matrice[44] = 160;
 
     matrice[45] = 0;
-
     matrice[46] = 128;
-
     matrice[47] = 64;
-
     matrice[48] = 1408;
-
     matrice[49] = 512;
 
     matrice[50] = 1280;
-
     matrice[51] = 256;
-
     matrice[52] = 512;
-
     matrice[53] = 0;
-
     matrice[54] = 0;
 
     matrice[55] = 0;
-
     matrice[56] = 0;
-
     matrice[57] = 0;
-
     matrice[58] = 0;
-
     matrice[59] = 0;
   }
   if (numero == 2)
   {
     matrice[30] = 0;
-
     matrice[31] = 0;
-
     matrice[32] = 896;
-
     matrice[33] = 96;
-
     matrice[34] = 784;
 
     matrice[35] = 0;
-
     matrice[36] = 776;
-
     matrice[37] = 512;
-
     matrice[38] = 260;
-
     matrice[39] = 1280;
 
     matrice[40] = 512;
-
     matrice[41] = 1408;
-
     matrice[42] = 1088;
-
     matrice[43] = 640;
-
     matrice[44] = 162;
 
     matrice[45] = 4352;
-
     matrice[46] = 12416;
-
     matrice[47] = 6240;
-
     matrice[48] = 5248;
-
     matrice[49] = 2080;
 
     matrice[50] = 1024;
-
     matrice[51] = 2128;
-
     matrice[52] = 1568;
-
     matrice[53] = 576;
-
     matrice[54] = 1152;
 
     matrice[55] = 784;
-
     matrice[56] = 1120;
-
     matrice[57] = 896;
-
     matrice[58] = 1024;
-
     matrice[59] = 0;
   }
 }
@@ -840,625 +648,385 @@ void update_cadrant_HD(uint16_t numero, uint16_t matrice[])
   if (numero == 0)
   {
     matrice[60] = 0;
-
     matrice[61] = 0;
-
     matrice[62] = 0;
-
     matrice[63] = 1024;
-
     matrice[64] = 768;
 
     matrice[65] = 1152;
-
     matrice[66] = 832;
-
     matrice[67] = 1696;
-
     matrice[68] = 2128;
-
     matrice[69] = 1024;
 
     matrice[70] = 2080;
-
     matrice[71] = 5128;
-
     matrice[72] = 6176;
-
     matrice[73] = 12288;
-
     matrice[74] = 2052;
 
     matrice[75] = 4112;
-
     matrice[76] = 5120;
-
     matrice[77] = 3072;
-
     matrice[78] = 1032;
-
     matrice[79] = 512;
 
     matrice[80] = 1024;
-
     matrice[81] = 276;
-
     matrice[82] = 544;
-
     matrice[83] = 840;
-
     matrice[84] = 128;
 
     matrice[85] = 784;
-
     matrice[86] = 96;
-
     matrice[87] = 896;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
 
   if (numero == 1)
   {
     matrice[60] = 0;
-
     matrice[61] = 0;
-
     matrice[62] = 0;
-
     matrice[63] = 0;
-
     matrice[64] = 0;
 
     matrice[65] = 0;
-
     matrice[66] = 0;
-
     matrice[67] = 1024;
-
     matrice[68] = 2048;
-
     matrice[69] = 1024;
 
     matrice[70] = 2560;
-
     matrice[71] = 1280;
-
     matrice[72] = 1024;
-
     matrice[73] = 640;
-
     matrice[74] = 128;
 
     matrice[75] = 256;
-
     matrice[76] = 128;
-
     matrice[77] = 64;
-
     matrice[78] = 136;
-
     matrice[79] = 32;
 
     matrice[80] = 0;
-
     matrice[81] = 80;
-
     matrice[82] = 32;
-
     matrice[83] = 64;
-
     matrice[84] = 128;
 
     matrice[85] = 256;
-
     matrice[86] = 0;
-
     matrice[87] = 0;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
   if (numero == 2)
   {
     matrice[60] = 0;
-
     matrice[61] = 1024;
-
     matrice[62] = 128;
-
     matrice[63] = 1120;
-
     matrice[64] = 16;
 
     matrice[65] = 1152;
-
     matrice[66] = 72;
-
     matrice[67] = 1184;
-
     matrice[68] = 2132;
-
     matrice[69] = 256;
 
     matrice[70] = 2080;
-
     matrice[71] = 4488;
-
     matrice[72] = 4160;
-
     matrice[73] = 12928;
-
     matrice[74] = 2182;
 
     matrice[75] = 4864;
-
     matrice[76] = 5760;
-
     matrice[77] = 3072;
-
     matrice[78] = 1288;
-
     matrice[79] = 512;
 
     matrice[80] = 1024;
-
     matrice[81] = 20;
-
     matrice[82] = 32;
-
     matrice[83] = 72;
-
     matrice[84] = 128;
 
     matrice[85] = 784;
-
     matrice[86] = 96;
-
     matrice[87] = 896;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
   if (numero == 3)
   {
     matrice[60] = 0;
-
     matrice[61] = 1024;
-
     matrice[62] = 512;
-
     matrice[63] = 1024;
-
     matrice[64] = 512;
 
     matrice[65] = 1024;
-
     matrice[66] = 512;
-
     matrice[67] = 1536;
-
     matrice[68] = 2116;
-
     matrice[69] = 1024;
 
     matrice[70] = 2080;
-
     matrice[71] = 5248;
-
     matrice[72] = 6208;
-
     matrice[73] = 12416;
-
     matrice[74] = 18566;
 
     matrice[75] = 4352;
-
     matrice[76] = 12928;
-
     matrice[77] = 5120;
-
     matrice[78] = 1288;
-
     matrice[79] = 2560;
 
     matrice[80] = 1024;
-
     matrice[81] = 2324;
-
     matrice[82] = 1568;
-
     matrice[83] = 840;
-
     matrice[84] = 1152;
 
     matrice[85] = 784;
-
     matrice[86] = 1120;
-
     matrice[87] = 896;
-
     matrice[88] = 1024;
-
     matrice[89] = 0;
   }
 
   if (numero == 4)
   {
     matrice[60] = 0;
-
     matrice[61] = 0;
-
     matrice[62] = 0;
-
     matrice[63] = 1024;
-
     matrice[64] = 768;
 
     matrice[65] = 1152;
-
     matrice[66] = 832;
-
     matrice[67] = 160;
-
     matrice[68] = 64;
-
     matrice[69] = 0;
 
     matrice[70] = 32;
-
     matrice[71] = 256;
-
     matrice[72] = 4096;
-
     matrice[73] = 12928;
-
     matrice[74] = 2176;
 
     matrice[75] = 4864;
-
     matrice[76] = 5760;
-
     matrice[77] = 3072;
-
     matrice[78] = 1280;
-
     matrice[79] = 512;
 
     matrice[80] = 1024;
-
     matrice[81] = 256;
-
     matrice[82] = 512;
-
     matrice[83] = 768;
-
     matrice[84] = 0;
 
     matrice[85] = 768;
-
     matrice[86] = 0;
-
     matrice[87] = 768;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
   if (numero == 5)
   {
     matrice[60] = 1;
-
     matrice[61] = 1024;
-
     matrice[62] = 896;
-
     matrice[63] = 1120;
-
     matrice[64] = 768;
 
     matrice[65] = 1152;
-
     matrice[66] = 64;
-
     matrice[67] = 1184;
-
     matrice[68] = 2116;
-
     matrice[69] = 256;
 
     matrice[70] = 2080;
-
     matrice[71] = 4480;
-
     matrice[72] = 4160;
-
     matrice[73] = 8832;
-
     matrice[74] = 16518;
 
     matrice[75] = 768;
-
     matrice[76] = 1664;
-
     matrice[77] = 3072;
-
     matrice[78] = 5384;
-
     matrice[79] = 2560;
 
     matrice[80] = 1024;
-
     matrice[81] = 2324;
-
     matrice[82] = 1568;
-
     matrice[83] = 840;
-
     matrice[84] = 1152;
 
     matrice[85] = 784;
-
     matrice[86] = 1120;
-
     matrice[87] = 896;
-
     matrice[88] = 1024;
-
     matrice[89] = 0;
   }
   if (numero == 6)
   {
     matrice[60] = 0;
-
     matrice[61] = 1024;
-
     matrice[62] = 896;
-
     matrice[63] = 1120;
-
     matrice[64] = 784;
 
     matrice[65] = 1152;
-
     matrice[66] = 72;
-
     matrice[67] = 1184;
-
     matrice[68] = 2132;
-
     matrice[69] = 256;
 
     matrice[70] = 2080;
-
     matrice[71] = 4488;
-
     matrice[72] = 4160;
-
     matrice[73] = 8832;
-
     matrice[74] = 134;
 
     matrice[75] = 768;
-
     matrice[76] = 1664;
-
     matrice[77] = 3072;
-
     matrice[78] = 1288;
-
     matrice[79] = 512;
 
     matrice[80] = 1024;
-
     matrice[81] = 276;
-
     matrice[82] = 544;
-
     matrice[83] = 840;
-
     matrice[84] = 128;
 
     matrice[85] = 784;
-
     matrice[86] = 96;
-
     matrice[87] = 896;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
   if (numero == 7)
   {
     matrice[60] = 0;
-
     matrice[61] = 0;
-
     matrice[62] = 0;
-
     matrice[63] = 1024;
-
     matrice[64] = 512;
 
     matrice[65] = 1024;
-
     matrice[66] = 512;
-
     matrice[67] = 1536;
-
     matrice[68] = 2048;
-
     matrice[69] = 1024;
 
     matrice[70] = 2048;
-
     matrice[71] = 5120;
-
     matrice[72] = 7168;
-
     matrice[73] = 5632;
-
     matrice[74] = 2048;
 
     matrice[75] = 768;
-
     matrice[76] = 1664;
-
     matrice[77] = 1024;
-
     matrice[78] = 384;
-
     matrice[79] = 512;
 
     matrice[80] = 256;
-
     matrice[81] = 320;
-
     matrice[82] = 128;
-
     matrice[83] = 320;
-
     matrice[84] = 128;
 
     matrice[85] = 256;
-
     matrice[86] = 64;
-
     matrice[87] = 384;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
 
   if (numero == 8)
   {
     matrice[60] = 0;
-
     matrice[61] = 1024;
-
     matrice[62] = 896;
-
     matrice[63] = 1120;
-
     matrice[64] = 784;
 
     matrice[65] = 1152;
-
     matrice[66] = 72;
-
     matrice[67] = 1184;
-
     matrice[68] = 2132;
-
     matrice[69] = 256;
 
     matrice[70] = 2080;
-
     matrice[71] = 4488;
-
     matrice[72] = 4160;
-
     matrice[73] = 12928;
-
     matrice[74] = 2182;
 
     matrice[75] = 4864;
-
     matrice[76] = 5760;
-
     matrice[77] = 3072;
-
     matrice[78] = 1288;
-
     matrice[79] = 512;
 
     matrice[80] = 1024;
-
     matrice[81] = 276;
-
     matrice[82] = 544;
-
     matrice[83] = 840;
-
     matrice[84] = 128;
 
     matrice[85] = 784;
-
     matrice[86] = 96;
-
     matrice[87] = 896;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
 
   if (numero == 9)
   {
     matrice[60] = 0;
-
     matrice[61] = 1024;
-
     matrice[62] = 896;
-
     matrice[63] = 1120;
-
     matrice[64] = 768;
 
     matrice[65] = 1152;
-
     matrice[66] = 64;
-
     matrice[67] = 1184;
-
     matrice[68] = 2116;
-
     matrice[69] = 256;
 
     matrice[70] = 2080;
-
     matrice[71] = 4480;
-
     matrice[72] = 4160;
-
     matrice[73] = 12928;
-
     matrice[74] = 2182;
 
     matrice[75] = 4864;
-
     matrice[76] = 5760;
-
     matrice[77] = 3072;
-
     matrice[78] = 1288;
-
     matrice[79] = 512;
 
     matrice[80] = 1024;
-
     matrice[81] = 276;
-
     matrice[82] = 544;
-
     matrice[83] = 840;
-
     matrice[84] = 128;
 
     matrice[85] = 784;
-
     matrice[86] = 96;
-
     matrice[87] = 896;
-
     matrice[88] = 0;
-
     matrice[89] = 0;
   }
 }
@@ -1468,621 +1036,381 @@ void update_cadrant_BD(uint16_t numero, uint16_t matrice[])
   if (numero == 0)
   {
     matrice[90] = 0;
-
     matrice[91] = 0;
-
     matrice[92] = 0;
-
     matrice[93] = 1024;
-
     matrice[94] = 768;
 
     matrice[95] = 1152;
-
     matrice[96] = 832;
-
     matrice[97] = 1696;
-
     matrice[98] = 2128;
-
     matrice[99] = 1024;
 
     matrice[100] = 2080;
-
     matrice[101] = 5128;
-
     matrice[102] = 6176;
-
     matrice[103] = 12288;
-
     matrice[104] = 16416;
 
     matrice[105] = 4112;
-
     matrice[106] = 8192;
-
     matrice[107] = 4192;
-
     matrice[108] = 4224;
-
     matrice[109] = 2080;
 
     matrice[110] = 256;
-
     matrice[111] = 2368;
-
     matrice[112] = 1664;
-
     matrice[113] = 768;
-
     matrice[114] = 1024;
 
     matrice[115] = 0;
-
     matrice[116] = 0;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 1)
   {
     matrice[90] = 0;
-
     matrice[91] = 0;
-
     matrice[92] = 0;
-
     matrice[93] = 0;
-
     matrice[94] = 0;
 
     matrice[95] = 128;
-
     matrice[96] = 64;
-
     matrice[97] = 160;
-
     matrice[98] = 64;
-
     matrice[99] = 256;
 
     matrice[100] = 0;
-
     matrice[101] = 384;
-
     matrice[102] = 0;
-
     matrice[103] = 640;
-
     matrice[104] = 0;
 
     matrice[105] = 768;
-
     matrice[106] = 9728;
-
     matrice[107] = 7168;
-
     matrice[108] = 5120;
-
     matrice[109] = 2048;
 
     matrice[110] = 0;
-
     matrice[111] = 2048;
-
     matrice[112] = 1024;
-
     matrice[113] = 0;
-
     matrice[114] = 0;
 
     matrice[115] = 0;
-
     matrice[116] = 0;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 2)
   {
     matrice[90] = 0;
-
     matrice[91] = 1024;
-
     matrice[92] = 896;
-
     matrice[93] = 1120;
-
     matrice[94] = 784;
 
     matrice[95] = 1152;
-
     matrice[96] = 584;
-
     matrice[97] = 1568;
-
     matrice[98] = 2068;
-
     matrice[99] = 1024;
 
     matrice[100] = 2560;
-
     matrice[101] = 5384;
-
     matrice[102] = 3072;
-
     matrice[103] = 1664;
-
     matrice[104] = 16516;
 
     matrice[105] = 768;
-
     matrice[106] = 8832;
-
     matrice[107] = 4160;
-
     matrice[108] = 4480;
-
     matrice[109] = 2080;
 
     matrice[110] = 256;
-
     matrice[111] = 2112;
-
     matrice[112] = 1184;
-
     matrice[113] = 832;
-
     matrice[114] = 1152;
 
     matrice[115] = 768;
-
     matrice[116] = 1024;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 3)
   {
     matrice[90] = 1;
-
     matrice[91] = 0;
-
     matrice[92] = 0;
-
     matrice[93] = 1024;
-
     matrice[94] = 768;
 
     matrice[95] = 1152;
-
     matrice[96] = 832;
-
     matrice[97] = 1696;
-
     matrice[98] = 80;
-
     matrice[99] = 0;
 
     matrice[100] = 2080;
-
     matrice[101] = 5128;
-
     matrice[102] = 7200;
-
     matrice[103] = 13824;
-
     matrice[104] = 16388;
 
     matrice[105] = 4880;
-
     matrice[106] = 8832;
-
     matrice[107] = 4096;
-
     matrice[108] = 4488;
-
     matrice[109] = 2048;
 
     matrice[110] = 256;
-
     matrice[111] = 2052;
-
     matrice[112] = 1024;
-
     matrice[113] = 8;
-
     matrice[114] = 1024;
 
     matrice[115] = 0;
-
     matrice[116] = 1024;
-
     matrice[117] = 0;
-
     matrice[118] = 1024;
-
     matrice[119] = 0;
   }
   if (numero == 4)
   {
     matrice[90] = 0;
-
     matrice[91] = 1024;
-
     matrice[92] = 512;
-
     matrice[93] = 1024;
-
     matrice[94] = 528;
 
     matrice[95] = 1024;
-
     matrice[96] = 520;
-
     matrice[97] = 1536;
-
     matrice[98] = 2064;
-
     matrice[99] = 1024;
 
     matrice[100] = 2560;
-
     matrice[101] = 5384;
-
     matrice[102] = 7200;
-
     matrice[103] = 13952;
-
     matrice[104] = 16416;
 
     matrice[105] = 4880;
-
     matrice[106] = 8704;
-
     matrice[107] = 96;
-
     matrice[108] = 128;
-
     matrice[109] = 32;
 
     matrice[110] = 256;
-
     matrice[111] = 64;
-
     matrice[112] = 128;
-
     matrice[113] = 0;
-
     matrice[114] = 0;
 
     matrice[115] = 0;
-
     matrice[116] = 0;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 5)
   {
     matrice[90] = 1;
-
     matrice[91] = 1024;
-
     matrice[92] = 896;
-
     matrice[93] = 1120;
-
     matrice[94] = 784;
 
     matrice[95] = 128;
-
     matrice[96] = 72;
-
     matrice[97] = 32;
-
     matrice[98] = 2068;
-
     matrice[99] = 1024;
 
     matrice[100] = 2560;
-
     matrice[101] = 5384;
-
     matrice[102] = 7168;
-
     matrice[103] = 13952;
-
     matrice[104] = 16518;
 
     matrice[105] = 4880;
-
     matrice[106] = 8832;
-
     matrice[107] = 4192;
-
     matrice[108] = 4488;
-
     matrice[109] = 2080;
 
     matrice[110] = 256;
-
     matrice[111] = 2132;
-
     matrice[112] = 1184;
-
     matrice[113] = 72;
-
     matrice[114] = 1152;
 
     matrice[115] = 16;
-
     matrice[116] = 1120;
-
     matrice[117] = 128;
-
     matrice[118] = 1024;
-
     matrice[119] = 0;
   }
   if (numero == 6)
   {
     matrice[90] = 0;
-
     matrice[91] = 1024;
-
     matrice[92] = 896;
-
     matrice[93] = 1120;
-
     matrice[94] = 784;
 
     matrice[95] = 128;
-
     matrice[96] = 72;
-
     matrice[97] = 32;
-
     matrice[98] = 2068;
-
     matrice[99] = 1024;
 
     matrice[100] = 2560;
-
     matrice[101] = 5384;
-
     matrice[102] = 7168;
-
     matrice[103] = 13952;
-
     matrice[104] = 16516;
 
     matrice[105] = 4880;
-
     matrice[106] = 8832;
-
     matrice[107] = 4192;
-
     matrice[108] = 4488;
-
     matrice[109] = 2080;
 
     matrice[110] = 256;
-
     matrice[111] = 2128;
-
     matrice[112] = 1184;
-
     matrice[113] = 832;
-
     matrice[114] = 1152;
 
     matrice[115] = 768;
-
     matrice[116] = 1024;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 7)
   {
     matrice[90] = 0;
-
     matrice[91] = 0;
-
     matrice[92] = 896;
-
     matrice[93] = 96;
-
     matrice[94] = 784;
 
     matrice[95] = 128;
-
     matrice[96] = 840;
-
     matrice[97] = 672;
-
     matrice[98] = 336;
-
     matrice[99] = 1280;
 
     matrice[100] = 544;
-
     matrice[101] = 1288;
-
     matrice[102] = 3104;
-
     matrice[103] = 5632;
-
     matrice[104] = 2048;
 
     matrice[105] = 4624;
-
     matrice[106] = 13312;
-
     matrice[107] = 6144;
-
     matrice[108] = 4096;
-
     matrice[109] = 0;
 
     matrice[110] = 0;
-
     matrice[111] = 0;
-
     matrice[112] = 0;
-
     matrice[113] = 0;
-
     matrice[114] = 0;
 
     matrice[115] = 0;
-
     matrice[116] = 0;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 8)
   {
     matrice[90] = 0;
-
     matrice[91] = 1024;
-
     matrice[92] = 896;
-
     matrice[93] = 1120;
-
     matrice[94] = 784;
 
     matrice[95] = 1152;
-
     matrice[96] = 584;
-
     matrice[97] = 1568;
-
     matrice[98] = 2068;
-
     matrice[99] = 1024;
 
     matrice[100] = 2560;
-
     matrice[101] = 5384;
-
     matrice[102] = 7168;
-
     matrice[103] = 13952;
-
     matrice[104] = 16516;
 
     matrice[105] = 4880;
-
     matrice[106] = 8832;
-
     matrice[107] = 4192;
-
     matrice[108] = 4488;
-
     matrice[109] = 2080;
 
     matrice[110] = 256;
-
     matrice[111] = 2128;
-
     matrice[112] = 1184;
-
     matrice[113] = 832;
-
     matrice[114] = 1152;
 
     matrice[115] = 768;
-
     matrice[116] = 1024;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
   if (numero == 9)
   {
     matrice[90] = 0;
-
     matrice[91] = 1024;
-
     matrice[92] = 896;
-
     matrice[93] = 1120;
-
     matrice[94] = 784;
 
     matrice[95] = 1152;
-
     matrice[96] = 584;
-
     matrice[97] = 1568;
-
     matrice[98] = 2068;
-
     matrice[99] = 1024;
 
     matrice[100] = 2560;
-
     matrice[101] = 5384;
-
     matrice[102] = 7168;
-
     matrice[103] = 13952;
-
     matrice[104] = 16516;
 
     matrice[105] = 4880;
-
     matrice[106] = 8832;
-
     matrice[107] = 4192;
-
     matrice[108] = 4488;
-
     matrice[109] = 2080;
 
     matrice[110] = 256;
-
     matrice[111] = 2128;
-
     matrice[112] = 1184;
-
     matrice[113] = 64;
-
     matrice[114] = 1152;
 
     matrice[115] = 0;
-
     matrice[116] = 1024;
-
     matrice[117] = 0;
-
     matrice[118] = 0;
-
     matrice[119] = 0;
   }
 }
