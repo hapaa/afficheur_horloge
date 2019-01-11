@@ -1510,11 +1510,11 @@ int main(void)
                               0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0,
-                              0, 0, 128, 96, 16,
-                              0, 8, 32, 20, 0,
-                              32, 0, 96, 0, 160,
-                              0, 128, 64, 1408, 512,
-                              1280, 256, 512, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0,
@@ -1534,6 +1534,13 @@ int main(void)
   uint16_t twhile = 0;
   uint16_t compteur_while = 0;
   uint16_t tdebutwhile = compteur_debug;
+
+  // Initialisation variables compteurs tours
+  uint16_t tcompteurTourdebut = compteur_debug;
+  uint16_t tcompteurTourfin = 0;
+  uint16_t tcompteurTour = 0;
+  uint16_t compteur_tour = 0;
+
   for (;;)
   { /* Début de la boucle infinie */
     if (compteur_while++ >= 10000)
@@ -1564,6 +1571,24 @@ int main(void)
         pt_matrice_parcours = matrice_V3;
       }
       temps = 0;
+
+      if(compteur_tour++ >= 100)
+      { /* Compteur permettant de savoir le temps pour effectuer un tour */
+        tcompteurTourfin = compteur_debug;
+        tcompteurTour = tcompteurTourfin - tcompteurTourdebut;
+        tcompteurTourdebut = compteur_debug;
+        compteur_tour = 0;
+      }
+    }
+
+    if (changement_mode == 't')
+    { /* Permet de demander le résultat du compteur tour */
+      char string[64];
+      itoa(tcompteurTour, string, 10); //convert integer to string, radix=1
+      sprintf(string + strlen(string), "\n");
+
+      uart_send(string);
+      changement_mode = 'e';
     }
 
     if (changement_mode == 'd')
